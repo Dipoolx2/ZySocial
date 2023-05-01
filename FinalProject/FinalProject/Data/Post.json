@@ -1,0 +1,102 @@
+[
+    {
+        "PostId": 1,
+        "UserId": 1,
+        "Image": "https://example.com/post1.jpg",
+        "Caption": "My first post",
+        "ShowLikes": true,
+        "AllowComments": true,
+        "LikeCount": 5,
+        "PostDate": "2023-04-01T12:30:00Z"
+    },
+    {
+        "PostId": 2,
+        "UserId": 2,
+        "Image": "https://example.com/post2.jpg",
+        "Caption": "Beautiful sunset",
+        "ShowLikes": true,
+        "AllowComments": true,
+        "LikeCount": 10,
+        "PostDate": "2023-04-03T16:45:00Z"
+    },
+    {
+        "PostId": 3,
+        "UserId": 3,
+        "Image": "https://example.com/post3.jpg",
+        "Caption": "Vacation time",
+        "ShowLikes": true,
+        "AllowComments": true,
+        "LikeCount": 2,
+        "PostDate": "2023-04-05T09:15:00Z"
+    },
+    {
+        "PostId": 4,
+        "UserId": 1,
+        "Image": "https://example.com/post4.jpg",
+        "Caption": "Throwback to last summer",
+        "ShowLikes": true,
+        "AllowComments": true,
+        "LikeCount": 7,
+        "PostDate": "2023-04-07T20:00:00Z"
+    },
+    {
+        "PostId": 5,
+        "UserId": 4,
+        "Image": "https://example.com/post5.jpg",
+        "Caption": "My new pet",
+        "ShowLikes": true,
+        "AllowComments": true,
+        "LikeCount": 3,
+        "PostDate": "2023-04-10T14:30:00Z"
+    },
+    {
+        "PostId": 6,
+        "UserId": 5,
+        "Image": "https://example.com/post6.jpg",
+        "Caption": "Working from home",
+        "ShowLikes": true,
+        "AllowComments": true,
+        "LikeCount": 1,
+        "PostDate": "2023-04-13T11:00:00Z"
+    },
+    {
+        "PostId": 7,
+        "UserId": 2,
+        "Image": "https://example.com/post7.jpg",
+        "Caption": "My favorite book",
+        "ShowLikes": true,
+        "AllowComments": true,
+        "LikeCount": 8,
+        "PostDate": "2023-04-16T08:15:00Z"
+    },
+    {
+        "PostId": 8,
+        "UserId": 3,
+        "Image": "https://example.com/post8.jpg",
+        "Caption": "Birthday celebration",
+        "ShowLikes": true,
+        "AllowComments": true,
+        "LikeCount": 4,
+        "PostDate": "2023-04-19T18:45:00Z"
+    },
+    {
+        "PostId": 9,
+        "UserId": 4,
+        "Image": "https://example.com/post9.jpg",
+        "Caption": "My art project",
+        "ShowLikes": true,
+        "AllowComments": true,
+        "LikeCount": 2,
+        "PostDate": "2023-04-22T14:45:00Z"
+    },
+    {
+        "PostId": 10,
+        "UserId": 5,
+        "Image": "https://example.com/post10.jpg",
+        "Caption": "Beach day",
+        "ShowLikes": true,
+        "AllowComments": true,
+        "LikeCount": 6,
+        "PostDate": "2023-04-25T04:31:00Z"
+    }
+]

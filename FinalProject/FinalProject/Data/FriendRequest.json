@@ -1,0 +1,38 @@
+[
+  {
+    "SenderUserId": 1,
+    "ReceiverUserId": 2,
+    "FriendRequestAccepted": true,
+    "FriendRequestDeclined": false
+  },
+  {
+    "SenderUserId": 3,
+    "ReceiverUserId": 4,
+    "FriendRequestAccepted": true,
+    "FriendRequestDeclined": false
+  },
+  {
+    "SenderUserId": 2,
+    "ReceiverUserId": 3,
+    "FriendRequestAccepted": false,
+    "FriendRequestDeclined": true
+  },
+  {
+    "SenderUserId": 5,
+    "ReceiverUserId": 1,
+    "FriendRequestAccepted": false,
+    "FriendRequestDeclined": true
+  },
+  {
+    "SenderUserId": 4,
+    "ReceiverUserId": 5,
+    "FriendRequestAccepted": false,
+    "FriendRequestDeclined": false
+  },
+  {
+    "SenderUserId": 2,
+    "ReceiverUserId": 5,
+    "FriendRequestAccepted": false,
+    "FriendRequestDeclined": false
+  }
+]

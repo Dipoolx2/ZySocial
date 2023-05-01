@@ -1,0 +1,42 @@
+[
+  {
+    "UserId": 1,
+    "Name": "John",
+    "Password": "password1",
+    "Email": "john@example.com",
+    "ProfilePicture": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
+    "PhoneNumber": "(415) 555-1234",
+  },
+  {
+    "UserId": 2,
+    "Name": "Emily",
+    "Password": "password2",
+    "Email": "emily@example.com",
+    "ProfilePicture": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
+    "PhoneNumber": "(212) 555-6789",
+  },
+  {
+    "UserId": 3,
+    "Name": "Tom",
+    "Password": "password3",
+    "Email": "tom@example.com",
+    "ProfilePicture": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
+    "PhoneNumber": "(312) 555-9012",
+  },
+  {
+    "UserId": 4,
+    "Name": "Kate",
+    "Password": "password4",
+    "Email": "kate@example.com",
+    "ProfilePicture": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
+    "PhoneNumber": "(415) 555-1234",
+  },
+  {
+    "UserId": 5,
+    "Name": "Alex",
+    "Password": "password5",
+    "Email": "alex@example.com",
+    "ProfilePicture": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
+    "PhoneNumber": "(212) 555-6789",
+  }
+]

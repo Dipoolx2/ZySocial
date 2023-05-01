@@ -1,0 +1,52 @@
+[
+  {
+    "CommentId": 1,
+    "PostId": 1,
+    "CommentBody": "Nice post!"
+  },
+  {
+    "CommentId": 2,
+    "PostId": 1,
+    "CommentBody": "I love the photo!"
+  },
+  {
+    "CommentId": 3,
+    "PostId": 2,
+    "CommentBody": "Amazing colors!"
+  },
+  {
+    "CommentId": 4,
+    "PostId": 4,
+    "CommentBody": "Great memories!"
+  },
+  {
+    "CommentId": 5,
+    "PostId": 7,
+    "CommentBody": "What's the book about?"
+  },
+  {
+    "CommentId": 6,
+    "PostId": 8,
+    "CommentBody": "Happy birthday!"
+  },
+  {
+    "CommentId": 7,
+    "PostId": 9,
+    "CommentBody": "This is so cool!"
+  },
+  {
+    "CommentId": 8,
+    "PostId": 9,
+    "CommentBody": "How did you make it?"
+  },
+  {
+    "CommentId": 9,
+    "PostId": 10,
+    "CommentBody": "I wish I was there!"
+  },
+  {
+    "CommentId": 10,
+    "PostId": 10,
+    "CommentBody": "Looks like fun!"
+  }
+]
