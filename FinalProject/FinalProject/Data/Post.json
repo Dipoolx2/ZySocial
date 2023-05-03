@@ -2,7 +2,7 @@
     {
         "PostId": 1,
         "UserId": 1,
-        "Image": "https://example.com/post1.jpg",
+        "Image": null,
         "Caption": "My first post",
         "ShowLikes": true,
         "AllowComments": true,
@@ -12,7 +12,7 @@
     {
         "PostId": 2,
         "UserId": 2,
-        "Image": "https://example.com/post2.jpg",
+        "Image": "https://images.pexels.com/photos/1454769/pexels-photo-1454769.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
         "Caption": "Beautiful sunset",
         "ShowLikes": true,
         "AllowComments": true,
@@ -22,7 +22,7 @@
     {
         "PostId": 3,
         "UserId": 3,
-        "Image": "https://example.com/post3.jpg",
+        "Image": null,
         "Caption": "Vacation time",
         "ShowLikes": true,
         "AllowComments": true,
@@ -32,7 +32,7 @@
     {
         "PostId": 4,
         "UserId": 1,
-        "Image": "https://example.com/post4.jpg",
+        "Image": "https://www.tvguide.com/a/img/hub/2019/05/01/f00759b5-f557-4bbb-a1c2-cc23c9eb894f/190501-last-summer-kj-apa-maia-mitchell.jpg",
         "Caption": "Throwback to last summer",
         "ShowLikes": true,
         "AllowComments": true,
@@ -42,7 +42,7 @@
     {
         "PostId": 5,
         "UserId": 4,
-        "Image": "https://example.com/post5.jpg",
+        "Image": "https://www.pcworld.com/wp-content/uploads/2023/04/dell-g2723h-1-2.jpg?quality=50&strip=all&w=1024",
         "Caption": "My new pet",
         "ShowLikes": true,
         "AllowComments": true,
@@ -52,7 +52,7 @@
     {
         "PostId": 6,
         "UserId": 5,
-        "Image": "https://example.com/post6.jpg",
+        "Image": "https://thumbs.dreamstime.com/b/teenage-boy-chilling-hammock-beach-under-shade-tree-tropical-hot-sunny-day-140084162.jpg",
         "Caption": "Working from home",
         "ShowLikes": true,
         "AllowComments": true,
@@ -62,18 +62,18 @@
     {
         "PostId": 7,
         "UserId": 2,
-        "Image": "https://example.com/post7.jpg",
-        "Caption": "My favorite book",
+        "Image": null,
+        "Caption": "My favorite book is Twilight",
         "ShowLikes": true,
         "AllowComments": true,
-        "LikeCount": 8,
+        "LikeCount": -5,
         "PostDate": "2023-04-16T08:15:00Z"
     },
     {
         "PostId": 8,
         "UserId": 3,
-        "Image": "https://example.com/post8.jpg",
-        "Caption": "Birthday celebration",
+        "Image": null,
+        "Caption": "Its my birthday",
         "ShowLikes": true,
         "AllowComments": true,
         "LikeCount": 4,
@@ -82,7 +82,7 @@
     {
         "PostId": 9,
         "UserId": 4,
-        "Image": "https://example.com/post9.jpg",
+        "Image": "https://empoweredparents.co/wp-content/uploads/2019/09/stages-of-drawing-3.jpg.webp",
         "Caption": "My art project",
         "ShowLikes": true,
         "AllowComments": true,
@@ -92,8 +92,8 @@
     {
         "PostId": 10,
         "UserId": 5,
-        "Image": "https://example.com/post10.jpg",
-        "Caption": "Beach day",
+        "Image": null,
+        "Caption": "Chillin on da beach",
         "ShowLikes": true,
         "AllowComments": true,
         "LikeCount": 6,

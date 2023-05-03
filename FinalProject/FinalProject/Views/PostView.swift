@@ -10,21 +10,34 @@ import SwiftUI
 
 struct PostView: View {
     let post: Post
+    let user: User?
+
+    init(post: Post) {
+        self.post = post
+        self.user = findUser(userid: post.userId)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("User \(post.userId)")
-                    .font(.headline)
+                if let username = user?.Name {
+                    Text(username)
+                        .font(.headline)
+                } else {
+                    Text("User #\(post.userId)")
+                        .font(.headline)
+                }
                 Spacer()
                 Text(post.postDate, style: .date)
                     .font(.subheadline)
             }
             Text(post.caption)
                 .font(.body)
-            ImageView(withURL: post.image)
-                .scaledToFit()
-                .frame(maxWidth: .infinity)
+            if let imageURL = post.image, !imageURL.isEmpty {
+                ImageView(withURL: imageURL)
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+            }
             HStack {
                 Text("\(post.likeCount) likes")
                     .font(.subheadline)
