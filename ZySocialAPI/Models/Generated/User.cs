@@ -14,12 +14,12 @@ namespace ZySocialAPI.Models
             Posts = new HashSet<Post>();
         }
 
-        public long UserId { get; set; }
-        public string Name { get; set; } = null!;
-        public string Password { get; set; } = null!;
-        public string? Email { get; set; }
-        public string? PhoneNumber { get; set; }
-        public string ProfilePicture { get; set; } = null!;
+        public Int64 UserId { get; set; }
+        public String Name { get; set; } = null!;
+        public String Password { get; set; } = null!;
+        public String? Email { get; set; }
+        public String? PhoneNumber { get; set; }
+        public String ProfilePicture { get; set; } = null!;
 
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<FriendRequest> FriendRequestUserReceivers { get; set; }

@@ -10,13 +10,13 @@ namespace ZySocialAPI.Models
             Comments = new HashSet<Comment>();
         }
 
-        public long PostId { get; set; }
-        public long UserId { get; set; }
-        public string? Image { get; set; }
-        public string Caption { get; set; } = null!;
+        public Int64 PostId { get; set; }
+        public Int64 UserId { get; set; }
+        public String? Image { get; set; }
+        public String Caption { get; set; } = null!;
         public bool ShowLikes { get; set; }
         public bool AllowComments { get; set; }
-        public int LikeCount { get; set; }
+        public Int64 LikeCount { get; set; }
         public DateTime PostDate { get; set; }
 
         public virtual User User { get; set; } = null!;
