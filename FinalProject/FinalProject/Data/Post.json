@@ -24,7 +24,7 @@
         "UserId": 3,
         "Image": null,
         "Caption": "Vacation time",
-        "ShowLikes": true,
+        "ShowLikes": false,
         "AllowComments": true,
         "LikeCount": 2,
         "PostDate": "2023-04-05T09:15:00Z"
@@ -45,7 +45,7 @@
         "Image": "https://www.pcworld.com/wp-content/uploads/2023/04/dell-g2723h-1-2.jpg?quality=50&strip=all&w=1024",
         "Caption": "My new pet",
         "ShowLikes": true,
-        "AllowComments": true,
+        "AllowComments": false,
         "LikeCount": 3,
         "PostDate": "2023-04-10T14:30:00Z"
     },
@@ -54,7 +54,7 @@
         "UserId": 5,
         "Image": "https://thumbs.dreamstime.com/b/teenage-boy-chilling-hammock-beach-under-shade-tree-tropical-hot-sunny-day-140084162.jpg",
         "Caption": "Working from home",
-        "ShowLikes": true,
+        "ShowLikes": false,
         "AllowComments": true,
         "LikeCount": 1,
         "PostDate": "2023-04-13T11:00:00Z"

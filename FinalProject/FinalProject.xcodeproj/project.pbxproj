@@ -13,6 +13,9 @@
 		3F02114329F083860043EE49 /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F02114229F083860043EE49 /* LoginService.swift */; };
 		3F02114629F08A990043EE49 /* LocalDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F02114529F08A990043EE49 /* LocalDataManager.swift */; };
 		3F02114829F09FF10043EE49 /* LogoutService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F02114729F09FF10043EE49 /* LogoutService.swift */; };
+		3F149C1E2A030170007E4F29 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F149C1D2A030170007E4F29 /* Comment.swift */; };
+		3F149C202A030215007E4F29 /* CommentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F149C1F2A030215007E4F29 /* CommentManager.swift */; };
+		3F149C222A03051D007E4F29 /* CommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F149C212A03051D007E4F29 /* CommentsView.swift */; };
 		3F18A80029EDDDA4000BB32B /* FinalProjectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F18A7FF29EDDDA4000BB32B /* FinalProjectApp.swift */; };
 		3F18A80229EDDDA4000BB32B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F18A80129EDDDA4000BB32B /* ContentView.swift */; };
 		3F18A80429EDDDA6000BB32B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3F18A80329EDDDA6000BB32B /* Assets.xcassets */; };
@@ -39,6 +42,9 @@
 		3F02114229F083860043EE49 /* LoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginService.swift; sourceTree = "<group>"; };
 		3F02114529F08A990043EE49 /* LocalDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDataManager.swift; sourceTree = "<group>"; };
 		3F02114729F09FF10043EE49 /* LogoutService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutService.swift; sourceTree = "<group>"; };
+		3F149C1D2A030170007E4F29 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
+		3F149C1F2A030215007E4F29 /* CommentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentManager.swift; sourceTree = "<group>"; };
+		3F149C212A03051D007E4F29 /* CommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsView.swift; sourceTree = "<group>"; };
 		3F18A7FC29EDDDA4000BB32B /* FinalProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FinalProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F18A7FF29EDDDA4000BB32B /* FinalProjectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinalProjectApp.swift; sourceTree = "<group>"; };
 		3F18A80129EDDDA4000BB32B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -76,6 +82,7 @@
 			children = (
 				3F02113C29F0821E0043EE49 /* User.swift */,
 				3F21E9DA29F9C94F00130828 /* Post.swift */,
+				3F149C1D2A030170007E4F29 /* Comment.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -86,6 +93,7 @@
 				3F02113F29F083380043EE49 /* UserDataManager.swift */,
 				3F02114529F08A990043EE49 /* LocalDataManager.swift */,
 				3FAE17BF2A00551700617508 /* PostManager.swift */,
+				3F149C1F2A030215007E4F29 /* CommentManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -109,6 +117,7 @@
 				3F02113829F07CE70043EE49 /* RegisterView.swift */,
 				3FAE17C12A005FB800617508 /* PostView.swift */,
 				3FAE17C32A005FCF00617508 /* ImageView.swift */,
+				3F149C212A03051D007E4F29 /* CommentsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -242,11 +251,14 @@
 			files = (
 				3F18A81C29EDEA25000BB32B /* FeedView.swift in Sources */,
 				3F02114829F09FF10043EE49 /* LogoutService.swift in Sources */,
+				3F149C222A03051D007E4F29 /* CommentsView.swift in Sources */,
+				3F149C202A030215007E4F29 /* CommentManager.swift in Sources */,
 				3F18A80229EDDDA4000BB32B /* ContentView.swift in Sources */,
 				3F02114029F083380043EE49 /* UserDataManager.swift in Sources */,
 				3F21E9DB29F9C94F00130828 /* Post.swift in Sources */,
 				3F18A81A29EDEA1A000BB32B /* CreateView.swift in Sources */,
 				3F02114629F08A990043EE49 /* LocalDataManager.swift in Sources */,
+				3F149C1E2A030170007E4F29 /* Comment.swift in Sources */,
 				3F02113929F07CE70043EE49 /* RegisterView.swift in Sources */,
 				3FAE17C42A005FCF00617508 /* ImageView.swift in Sources */,
 				3F02113D29F0821E0043EE49 /* User.swift in Sources */,

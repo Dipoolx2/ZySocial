@@ -1,17 +1,12 @@
-//
-//  PostView.swift
-//  FinalProject
-//
-//  Created by Student on 5/1/23.
-//
-
 import Foundation
 import SwiftUI
 
 struct PostView: View {
     let post: Post
     let user: User?
-
+    @State private var showingComments = false
+    @State private var liked = false
+    
     init(post: Post) {
         self.post = post
         self.user = findUser(userid: post.userId)
@@ -39,13 +34,26 @@ struct PostView: View {
                     .frame(maxWidth: .infinity)
             }
             HStack {
-                Text("\(post.likeCount) likes")
-                    .font(.subheadline)
+                LikeButtonView(liked: $liked) {
+                    // handle like/unlike
+                    liked.toggle()
+                }
+                if (post.showLikes) {
+                    Text("\(post.likeCount) likes")
+                        .font(.subheadline)
+                }
                 Spacer()
                 if post.allowComments {
-                    Text("Comments")
-                        .font(.subheadline)
-                        .foregroundColor(.blue)
+                    Button(action: {
+                        self.showingComments = true
+                    }) {
+                        Text("Comments")
+                            .font(.subheadline)
+                            .foregroundColor(.blue)
+                    }
+                    .sheet(isPresented: $showingComments) {
+                        CommentsView(comments: getCommentsInPost(postId: post.id))
+                    }
                 }
             }
         }
@@ -53,5 +61,17 @@ struct PostView: View {
         .background(Color.white)
         .cornerRadius(10)
         .shadow(radius: 4)
+    }
+}
+
+struct LikeButtonView: View {
+    @Binding var liked: Bool
+    var action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: liked ? "heart.fill" : "heart")
+                .foregroundColor(liked ? .red : .black)
+        }
     }
 }

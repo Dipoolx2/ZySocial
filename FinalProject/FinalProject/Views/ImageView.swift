@@ -21,8 +21,10 @@ struct ImageView: View {
         Image(uiImage: imageLoader2.image ?? UIImage(systemName: "photo")!)
             .resizable()
             .aspectRatio(contentMode: .fill)
+            .clipShape(RoundedRectangle(cornerRadius: 10.0))
     }
 }
+
 
 class ImageLoader2: ObservableObject {
     @Published var image: UIImage?

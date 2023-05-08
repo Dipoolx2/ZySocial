@@ -2,51 +2,61 @@
   {
     "CommentId": 1,
     "PostId": 1,
-    "CommentBody": "Nice post!"
+    "Body": "Nice post!",
+    "UserId": 3
   },
   {
     "CommentId": 2,
     "PostId": 1,
-    "CommentBody": "I love the photo!"
+    "Body": "I love the photo!",
+    "UserId": 2
   },
   {
     "CommentId": 3,
     "PostId": 2,
-    "CommentBody": "Amazing colors!"
+    "Body": "Amazing colors!",
+    "UserId": 5
   },
   {
     "CommentId": 4,
     "PostId": 4,
-    "CommentBody": "Great memories!"
+    "Body": "Great memories!",
+    "UserId": 1
   },
   {
     "CommentId": 5,
     "PostId": 7,
-    "CommentBody": "What's the book about?"
+    "Body": "What's the book about?",
+    "UserId": 4
   },
   {
     "CommentId": 6,
     "PostId": 8,
-    "CommentBody": "Happy birthday!"
+    "Body": "Happy birthday!",
+    "UserId": 3
   },
   {
     "CommentId": 7,
     "PostId": 9,
-    "CommentBody": "This is so cool!"
+    "Body": "This is so cool!",
+    "UserId": 2
   },
   {
     "CommentId": 8,
     "PostId": 9,
-    "CommentBody": "How did you make it?"
+    "Body": "How did you make it?",
+    "UserId": 1
   },
   {
     "CommentId": 9,
     "PostId": 10,
-    "CommentBody": "I wish I was there!"
+    "Body": "I wish I was there!",
+    "UserId": 5
   },
   {
     "CommentId": 10,
     "PostId": 10,
-    "CommentBody": "Looks like fun!"
+    "Body": "Looks like fun!",
+    "UserId": 4
   }
 ]
