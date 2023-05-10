@@ -10,10 +10,12 @@ import Combine
 
 struct ProfileView: View {
     @StateObject var viewModel: ProfileViewModel
+    @Binding var posts: [Post]
     let userId: Int64
     
-    init(userId: Int64) {
+    init(userId: Int64, posts: Binding<[Post]>) {
         self.userId = userId
+        self._posts = posts
         _viewModel = StateObject(wrappedValue: ProfileViewModel(userId: userId))
     }
     
@@ -46,11 +48,16 @@ struct ProfileView: View {
             .padding(.top, 32)
             .padding(.bottom, 32) // add padding to the bottom of the VStack
             Divider() // add a horizontal separator
-            List {
-                ForEach(0..<viewModel.posts.count) { index in
-                    Text(viewModel.posts[index])
+            ScrollView {
+                LazyVStack(spacing: 10) {
+                    ForEach(posts) { post in
+                        PostView(post: post, inFeedView: false)
+                    }
                 }
+                .padding(.horizontal)
+                .padding(.top, 5)
             }
+            
         }
         .padding()
         .onAppear {

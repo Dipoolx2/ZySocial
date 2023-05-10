@@ -4,27 +4,38 @@ import SwiftUI
 struct PostView: View {
     let post: Post
     let user: User?
+    let inFeedView: Bool
     @State private var showingComments = false
     @State private var liked = false
     
-    init(post: Post) {
+    init(post: Post, inFeedView: Bool) {
         self.post = post
         self.user = findUser(userid: post.userId)
+        self.inFeedView = inFeedView
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 if let username = user?.Name {
-                    NavigationLink(destination: ProfileView(userId: post.userId)) {
+                    if inFeedView {
+                        NavigationLink(destination: ProfileView(userId: post.userId, posts: getPostsByUserId(userId: post.userId))) { // Provide an empty array for now
+                            Text(username)
+                                .font(.headline)}
+                    } else {
                         Text(username)
                             .font(.headline)
                     }
                 } else {
-                    NavigationLink(destination: ProfileView(userId: post.userId)) {
+                    if inFeedView {
+                        NavigationLink(destination: ProfileView(userId: post.userId, posts: getPostsByUserId(userId: post.userId))) { // Provide an empty array for now
+                            Text("User #\(post.userId)")
+                                .font(.headline)}
+                    } else {
                         Text("User #\(post.userId)")
                             .font(.headline)
                     }
+
                 }
                 Spacer()
                 Text(post.postDate, style: .date)

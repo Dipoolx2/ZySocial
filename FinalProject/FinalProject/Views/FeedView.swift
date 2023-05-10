@@ -12,7 +12,7 @@ struct FeedView: View {
                 ScrollView {
                     LazyVStack(spacing: 10) {
                         ForEach(posts) { post in
-                            PostView(post: post)
+                            PostView(post: post, inFeedView: true)
                         }
                     }
                     .padding(.horizontal)
@@ -52,7 +52,7 @@ struct FeedView: View {
             .tag(1)
             
             NavigationView {
-                ProfileView(userId: loggedInUserId!)
+                ProfileView(userId: loggedInUserId!, posts: getPostsByUserId(userId: loggedInUserId!))
                     .navigationBarTitle("My Profile")
                     .navigationBarBackButtonHidden(true)
             }
