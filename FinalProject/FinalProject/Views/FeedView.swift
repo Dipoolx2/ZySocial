@@ -52,7 +52,7 @@ struct FeedView: View {
             .tag(1)
             
             NavigationView {
-                ProfileView()
+                ProfileView(userId: loggedInUserId!)
                     .navigationBarTitle("My Profile")
                     .navigationBarBackButtonHidden(true)
             }

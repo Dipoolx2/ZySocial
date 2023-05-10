@@ -16,11 +16,15 @@ struct PostView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 if let username = user?.Name {
-                    Text(username)
-                        .font(.headline)
+                    NavigationLink(destination: ProfileView(userId: post.userId)) {
+                        Text(username)
+                            .font(.headline)
+                    }
                 } else {
-                    Text("User #\(post.userId)")
-                        .font(.headline)
+                    NavigationLink(destination: ProfileView(userId: post.userId)) {
+                        Text("User #\(post.userId)")
+                            .font(.headline)
+                    }
                 }
                 Spacer()
                 Text(post.postDate, style: .date)
