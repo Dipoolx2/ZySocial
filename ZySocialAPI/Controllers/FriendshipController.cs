@@ -92,7 +92,7 @@ namespace ZySocialAPI.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
                 if (FriendRequestExists(newFriendRequest.FriendRequestId))
                 {
@@ -100,11 +100,18 @@ namespace ZySocialAPI.Controllers
                 }
                 else
                 {
-                    throw;
+                    Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                    return StatusCode(500);
                 }
             }
 
-            return Ok();
+            var createdFriendRequest = await GetSimpleFriendRequest(newFriendRequest.FriendRequestId) as OkObjectResult;
+            if (createdFriendRequest == null)
+            {
+                Console.WriteLine("ERROR: Newly created friend request with id " + newFriendRequest.FriendRequestId + " could not be found.");
+                return StatusCode(500, "Newly created friend request could not be found.");
+            }
+            return createdFriendRequest;
         }
 
         private bool FriendRequestExists(Int64? id)
@@ -133,7 +140,7 @@ namespace ZySocialAPI.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 if (!FriendRequestExists(friendRequestId))
                 {
@@ -141,27 +148,42 @@ namespace ZySocialAPI.Controllers
                 }
                 else
                 {
-                    throw;
+                    Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                    return StatusCode(500);
                 }
             }
 
-            return Ok();
+            var updatedFriendRequest = await GetSimpleFriendRequest(existingFriendRequest.FriendRequestId) as OkObjectResult;
+            if (updatedFriendRequest == null)
+            {
+                return StatusCode(500, "Updated friend request could not be found.");
+            }
+            return updatedFriendRequest;
         }
 
         [HttpDelete("[action]/{friendRequestId}")]
         public async Task<IActionResult> DeleteFriendRequest(Int64 friendRequestId)
         {
-            var friendRequest = await _context.FriendRequests.FindAsync(friendRequestId);
-
-            if (friendRequest == null)
+            try
             {
-                return NotFound();
+                var friendRequest = await _context.FriendRequests.FindAsync(friendRequestId);
+
+                if (friendRequest == null)
+                {
+                    return NotFound();
+                }
+
+                _context.FriendRequests.Remove(friendRequest);
+                await _context.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                return StatusCode(500);
             }
 
-            _context.FriendRequests.Remove(friendRequest);
-            await _context.SaveChangesAsync();
-
-            return Ok();
         }
 
 

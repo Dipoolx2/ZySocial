@@ -60,7 +60,7 @@ namespace ZySocialAPI.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
                 if (NotificationExists(newNotification.NotificationId))
                 {
@@ -68,11 +68,18 @@ namespace ZySocialAPI.Controllers
                 }
                 else
                 {
-                    throw;
+                    Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                    return StatusCode(500); ;
                 }
             }
 
-            return Ok();
+            var createdNotification = await GetSimpleNotification(newNotification.NotificationId) as OkObjectResult;
+            if (createdNotification == null) 
+            {
+                Console.WriteLine("ERROR: Newly created notification with id " + newNotification.NotificationId + " could not be found.");
+                return StatusCode(500, "Newly created notification could not be found.");
+            }
+            return createdNotification;
         }
 
         [HttpPut("[action]/{notificationId}")]
@@ -93,7 +100,7 @@ namespace ZySocialAPI.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 if (!NotificationExists(notificationId))
                 {
@@ -101,11 +108,18 @@ namespace ZySocialAPI.Controllers
                 }
                 else
                 {
-                    throw;
+                    Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                    return StatusCode(500);
                 }
             }
 
-            return Ok();
+            var updatedNotification = await GetSimpleNotification(existingNotification.NotificationId) as OkObjectResult;
+            if (updatedNotification == null)
+            {
+                Console.WriteLine("ERROR: Updated notification with id " + existingNotification.NotificationId + " could not be found.");
+                return StatusCode(500, "Updated notification could not be found.");
+            }
+            return updatedNotification;
         }
 
         [HttpGet("[action]/{notificationId}")]
@@ -132,17 +146,25 @@ namespace ZySocialAPI.Controllers
         [HttpDelete("[action]/{notificationId}")]
         public async Task<IActionResult> DeleteSimpleNotification(Int64 notificationId)
         {
-            var notification = await _context.Notifications.FindAsync(notificationId);
-
-            if (notification == null)
+            try
             {
-                return NotFound();
+                var notification = await _context.Notifications.FindAsync(notificationId);
+
+                if (notification == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Notifications.Remove(notification);
+                await _context.SaveChangesAsync();
+
+                return Ok();
             }
-
-            _context.Notifications.Remove(notification);
-            await _context.SaveChangesAsync();
-
-            return Ok();
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                return StatusCode(500);
+            }
         }
 
         private bool NotificationExists(Int64? id)

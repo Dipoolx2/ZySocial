@@ -39,7 +39,7 @@ namespace ZySocialAPI.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
-                return StatusCode(500, "A server-side error occurred.");
+                return StatusCode(500);
             }
             
         }
@@ -64,7 +64,7 @@ namespace ZySocialAPI.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
                 if (UserExists(newUser.UserId))
                 {
@@ -72,14 +72,20 @@ namespace ZySocialAPI.Controllers
                 }
                 else
                 {
-                    throw;
+                    return StatusCode(500);
                 }
             }
 
-            return Ok();
+            var createdUser = await GetSimpleUser(newUser.UserId) as OkObjectResult;
+            if (createdUser == null)
+            {
+                Console.WriteLine("ERROR: Newly created user with id " + newUser.UserId + " could not be found.");
+                return StatusCode(500, "Newly created user could not be found.");
+            }
+            return createdUser;
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("[action]/{userId}")]
         public async Task<IActionResult> GetSimpleUser(Int64 userId)
         {
             try
@@ -107,11 +113,11 @@ namespace ZySocialAPI.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
-                return StatusCode(500, "A server-side error occurred.");
+                return StatusCode(500);
             }
         }
 
-        [HttpPut("{userId}")]
+        [HttpPut("[action]/{userId}")]
         public async Task<IActionResult> UpdateSimpleUser(Int64 userId, [FromBody] SimpleUser user)
         {
             try
@@ -131,18 +137,24 @@ namespace ZySocialAPI.Controllers
 
                 await _context.SaveChangesAsync();
 
-                return Ok();
+                var updatedUser = await GetSimpleUser(existingUser.UserId) as OkObjectResult;
+                if (updatedUser == null)
+                {
+                    Console.WriteLine("ERROR: Updated user with id " + existingUser.UserId + " could not be found.");
+                    return StatusCode(500, "Updated user could not be found.");
+                }
+                return updatedUser;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
-                return StatusCode(500, "A server-side error occurred.");
+                return StatusCode(500);
             }
         }
 
 
 
-        [HttpDelete("{userId}")]
+        [HttpDelete("[action]/{userId}")]
         public async Task<IActionResult> DeleteSimpleUser(Int64 userId)
         {
             try
