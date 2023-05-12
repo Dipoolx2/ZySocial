@@ -14,7 +14,7 @@ namespace ZySocialAPI.Models
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Int64? FriendRequestId { get; set; }
+        public Int64 FriendRequestId { get; set; }
         public DateTime SendDate { get; set; }
 
         public virtual User UserReceiver { get; set; } = null!;
