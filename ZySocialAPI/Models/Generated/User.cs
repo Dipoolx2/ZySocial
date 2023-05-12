@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ZySocialAPI.Models
 {
@@ -13,8 +13,9 @@ namespace ZySocialAPI.Models
             Notifications = new HashSet<Notification>();
             Posts = new HashSet<Post>();
         }
-
-        public Int64 UserId { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Int64? UserId { get; set; }
         public String Name { get; set; } = null!;
         public String Password { get; set; } = null!;
         public String? Email { get; set; }
