@@ -14,6 +14,16 @@ func getPosts() -> Binding<[Post]> {
     return Binding.constant(posts)
 }
 
+func getPostsByUserId(userId: Int64) -> Binding<[Post]> {
+    var result: [Post] = []
+    for post in posts {
+        if post.userId == userId {
+            result.append(post)
+        }
+    }
+    return Binding.constant(result)
+}
+
 func getPostsFromJson() -> [Post] {
     guard let url = Bundle.main.url(forResource: "Post", withExtension: "json") else {
         // handle error if the file is not found

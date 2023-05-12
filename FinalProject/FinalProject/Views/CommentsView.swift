@@ -36,8 +36,15 @@ struct CommentsView: View {
             List(toDisplay, id: \.CommentId) { comment in
                 HStack(alignment: .center) {
                     VStack(alignment: .leading) {
-                        Text("User: \(comment.UserId)")
-                            .font(.headline)
+                        if let user: User = findUser(userid: comment.UserId) {
+                            Text(user.Name)
+                                .font(.headline)
+                        } else {
+                            Text("User: \(comment.UserId)")
+                                .font(.headline)
+                        }
+                        
+                        
                         Text(comment.Body)
                             .font(.body)
                     }

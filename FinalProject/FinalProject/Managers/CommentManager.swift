@@ -18,6 +18,8 @@ func findComment(id: Int64) -> Comment? {
     return nil
 }
 
+// TODO: notifications, friends, change profile, api connection
+
 func getCommentsInPost(postId: Int64) -> [Comment] {
     var result: [Comment] = []
     for comment in comments {

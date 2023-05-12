@@ -9,7 +9,15 @@ import SwiftUI
 import Combine
 
 struct ProfileView: View {
-    @StateObject var viewModel = ProfileViewModel()
+    @StateObject var viewModel: ProfileViewModel
+    @Binding var posts: [Post]
+    let userId: Int64
+    
+    init(userId: Int64, posts: Binding<[Post]>) {
+        self.userId = userId
+        self._posts = posts
+        _viewModel = StateObject(wrappedValue: ProfileViewModel(userId: userId))
+    }
     
     var body: some View {
         VStack {
@@ -40,15 +48,20 @@ struct ProfileView: View {
             .padding(.top, 32)
             .padding(.bottom, 32) // add padding to the bottom of the VStack
             Divider() // add a horizontal separator
-            List {
-                ForEach(0..<viewModel.posts.count) { index in
-                    Text(viewModel.posts[index])
+            ScrollView {
+                LazyVStack(spacing: 10) {
+                    ForEach(posts) { post in
+                        PostView(post: post, inFeedView: false)
+                    }
                 }
+                .padding(.horizontal)
+                .padding(.top, 5)
             }
+            
         }
         .padding()
         .onAppear {
-            let user = findUser(userid: 2)!
+            let user = findUser(userid: userId)!
             viewModel.username = findUser(userid: user.UserId)!.Name
             viewModel.email = user.Email
             viewModel.phone = user.PhoneNumber
@@ -59,12 +72,18 @@ struct ProfileView: View {
 }
     
 class ProfileViewModel: ObservableObject {
+    private let userId: Int64
+    
     @Published var image: UIImage?
     @Published var username: String = "John Doe"
     @Published var email: String = "johndoe@example.com"
     @Published var phone: String = "+1-123-456-7890"
     @Published var posts: [String] = ["Post 1", "Post 2", "Post 3"] // mock data for posts
     
+    init(userId: Int64) {
+        self.userId = userId
+    }
+
     private var cancellable: AnyCancellable?
     
     func fetchProfile(urlString: String) {
