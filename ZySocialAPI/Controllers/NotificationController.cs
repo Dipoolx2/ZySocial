@@ -125,26 +125,34 @@ namespace ZySocialAPI.Controllers
         [HttpGet("[action]/{notificationId}")]
         public async Task<IActionResult> GetSimpleNotification(Int64 notificationId)
         {
-            var notification = await _context.Notifications.FindAsync(notificationId);
-
-            if (notification == null)
+            try
             {
-                return NotFound();
+                var notification = await _context.Notifications.FindAsync(notificationId);
+
+                if (notification == null)
+                {
+                    return NotFound();
+                }
+
+                var simpleNotification = new SimpleNotification
+                {
+                    UserId = notification.UserId,
+                    NotificationId = notification.NotificationId,
+                    Body = notification.Body,
+                    Title = notification.Title
+                };
+
+                return Ok(simpleNotification);
             }
-
-            var simpleNotification = new SimpleNotification
+            catch (Exception e)
             {
-                UserId = notification.UserId,
-                NotificationId = notification.NotificationId,
-                Body = notification.Body,
-                Title = notification.Title
-            };
-
-            return Ok(simpleNotification);
+                Console.WriteLine(e.Message + "\n" + e.StackTrace);
+                return StatusCode(500);
+            }
         }
 
         [HttpDelete("[action]/{notificationId}")]
-        public async Task<IActionResult> DeleteSimpleNotification(Int64 notificationId)
+        public async Task<IActionResult> DeleteNotification(Int64 notificationId)
         {
             try
             {

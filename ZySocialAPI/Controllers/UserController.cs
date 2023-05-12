@@ -155,7 +155,7 @@ namespace ZySocialAPI.Controllers
 
 
         [HttpDelete("[action]/{userId}")]
-        public async Task<IActionResult> DeleteSimpleUser(Int64 userId)
+        public async Task<IActionResult> DeleteUser(Int64 userId)
         {
             try
             {
