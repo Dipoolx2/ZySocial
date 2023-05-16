@@ -26,15 +26,15 @@ struct FeedView: View {
                 }
                 .navigationBarTitle("Feed")
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationBarItems(trailing:
-                    Button(action: {
+                .navigationBarItems(
+                    trailing: Button(action: {
                         presentationMode.wrappedValue.dismiss()
-                    }, label: {
+                    }) {
                         Text("Logout")
                             .foregroundColor(.red)
                             .padding()
                             .cornerRadius(10)
-                    })
+                    }
                     .background(
                         NavigationLink(destination: LoginView(isLoggingOut: true)) {
                             EmptyView()
@@ -64,17 +64,23 @@ struct FeedView: View {
             .tag(1)
             
             NavigationView {
-                
                 ProfileView(userId: loggedUserId, posts: getPostsByUserId(userId: loggedUserId))
                     .navigationBarTitle("My Profile")
                     .navigationBarBackButtonHidden(true) // Hide the back button
-            
-               
             }
             .tabItem {
                 Label("My Profile", systemImage: "person.crop.circle")
             }
             .tag(2)
+            
+            NavigationView {
+                FriendshipView(userId: loggedUserId)
+                    .navigationBarTitle("Friendships")
+            }
+            .tabItem {
+                Label("Friendships", systemImage: "person.2.fill")
+            }
+            .tag(3)
         }
         .accentColor(.blue)
     }
