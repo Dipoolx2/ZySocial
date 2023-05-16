@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Plugins;
 using ZySocialAPI.Data;
 using ZySocialAPI.Models;
 using ZySocialAPI.Models.Custom;
@@ -272,7 +273,33 @@ namespace ZySocialAPI.Controllers
             {
                 return StatusCode(500, "Updated friend request could not be found.");
             }
-            return updatedFriendRequest;
+            try
+            {
+                var user = await _context.Users
+                    .Where(u => u.UserId == existingFriendRequest.UserSenderId)
+                    .Select(u => new SimpleUser
+                    {
+                        UserId = u.UserId,
+                        Name = u.Name,
+                        Password = u.Password,
+                        Email = u.Email,
+                        PhoneNumber = u.PhoneNumber,
+                        ProfilePicture = u.ProfilePicture
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                return StatusCode(500);
+            }
         }
 
         private bool FriendRequestExists(Int64? id)
