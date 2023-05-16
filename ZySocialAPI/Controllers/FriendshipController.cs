@@ -27,35 +27,19 @@ namespace ZySocialAPI.Controllers
                 return NotFound();
             }
 
-            var simpleFriendRequest = new SimpleFriendRequest
-            {
-                UserSenderId = friendRequest.UserSenderId,
-                UserReceiverId = friendRequest.UserReceiverId,
-                Accepted = friendRequest.Accepted,
-                Responded = friendRequest.Responded,
-                FriendRequestId = friendRequest.FriendRequestId,
-                SendDate = friendRequest.SendDate
-            };
+            var simpleFriendRequest = new SimpleFriendRequest(friendRequest);
 
             return Ok(simpleFriendRequest);
         }
 
-
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetSimpleFriendRequests()
+        [HttpGet("[action]/{userId}")]
+        public async Task<IActionResult> GetSimpleFriendships(Int64 userId)
         {
             try
             {
                 var friendRequests = await _context.FriendRequests
-                    .Select(fr => new SimpleFriendRequest
-                    {
-                        UserSenderId = fr.UserSenderId,
-                        UserReceiverId = fr.UserReceiverId,
-                        Accepted = fr.Accepted,
-                        Responded = fr.Responded,
-                        FriendRequestId = fr.FriendRequestId,
-                        SendDate = fr.SendDate
-                    })
+                    .Where(fr => (fr.UserSenderId == userId || fr.UserReceiverId == userId) && fr.Accepted && fr.Responded)
+                    .Select(fr => new SimpleFriendRequest(fr))
                     .ToListAsync();
 
                 if (friendRequests == null)
@@ -70,6 +54,145 @@ namespace ZySocialAPI.Controllers
                 Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
                 return StatusCode(500, "A server-side error occurred.");
             }
+        }
+
+        [HttpGet("[action]/{userId}")]
+        public async Task<IActionResult> GetFriends(Int64 userId)
+        {
+            try
+            {
+                var friendRequests = await _context.FriendRequests
+                    .Where(fr => (fr.UserSenderId == userId || fr.UserReceiverId == userId) && fr.Accepted && fr.Responded)
+                    .ToListAsync();
+
+                var friendUserIds = friendRequests.Select(fr => fr.UserSenderId == userId ? fr.UserReceiverId : fr.UserSenderId).ToList();
+
+                var friends = new List<SimpleUser>();
+                foreach (var friendUserId in friendUserIds)
+                {
+                    try
+                    {
+                        var friend = await _context.Users
+                            .Where(u => u.UserId == friendUserId)
+                            .Select(u => new SimpleUser
+                            {
+                                UserId = u.UserId,
+                                Name = u.Name,
+                                Password = u.Password,
+                                Email = u.Email,
+                                PhoneNumber = u.PhoneNumber,
+                                ProfilePicture = u.ProfilePicture
+                            })
+                            .FirstOrDefaultAsync();
+
+                        if (friend == null)
+                        {
+                            continue;
+                        }
+
+                        friends.Add(friend);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                        continue;
+                    }
+                    
+                }
+
+                return Ok(friends);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                return StatusCode(500, "A server-side error occurred.");
+            }
+        }
+
+        [HttpGet("[action]/{userId}")]
+        public async Task<IActionResult> GetIncomingSimpleFriendRequests(Int64 userId)
+        {
+            try
+            {
+                var incomingFriendRequests = await _context.FriendRequests
+                    .Where(fr => fr.UserReceiverId == userId && !fr.Responded && !fr.Accepted)
+                    .Select(fr => new SimpleFriendRequest(fr))
+                    .ToListAsync();
+
+                return Ok(incomingFriendRequests);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                return StatusCode(500, "A server-side error occurred.");
+            }
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetSimpleFriendRequests()
+        {
+            try
+            {
+                var friendRequests = await _context.FriendRequests
+                    .Select(fr => new SimpleFriendRequest(fr))
+                    .ToListAsync();
+
+                if (friendRequests == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(friendRequests);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                return StatusCode(500, "A server-side error occurred.");
+            }
+        }
+
+        [HttpPost("[action]/{senderId}")]
+        public async Task<IActionResult> SendFriendRequest(Int64 senderId, Int64 receiverId)
+        {
+            if (_context.Users == null)
+            {
+                return Problem("Entity set 'ZySocialDbContext.Users' is null.");
+            }
+
+            FriendRequest newFriendRequest = new FriendRequest();
+            newFriendRequest.UserSenderId = senderId;
+            newFriendRequest.UserReceiverId = receiverId;
+            newFriendRequest.Accepted = false;
+            newFriendRequest.Responded = false;
+            newFriendRequest.SendDate = DateTime.Now;
+
+            _context.FriendRequests.Add(newFriendRequest);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+
+            }
+            catch (DbUpdateException ex)
+            {
+                if (FriendRequestExists(newFriendRequest.FriendRequestId))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                    return StatusCode(500);
+                }
+            }
+
+            SimpleFriendRequest returnRequest = new SimpleFriendRequest(newFriendRequest);
+            if (returnRequest == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(returnRequest);
         }
 
         [HttpPost("[action]")]
@@ -112,6 +235,44 @@ namespace ZySocialAPI.Controllers
                 return StatusCode(500, "Newly created friend request could not be found.");
             }
             return createdFriendRequest;
+        }
+
+        [HttpPut("[action]/{requestId}/{accepted}")]
+        public async Task<IActionResult> HandleSimpleFriendRequest(Int64 requestId, bool accepted)
+        {
+            var existingFriendRequest = await _context.FriendRequests.FindAsync(requestId);
+
+            if (existingFriendRequest == null)
+            {
+                return NotFound();
+            }
+
+            existingFriendRequest.Accepted = accepted;
+            existingFriendRequest.Responded = true;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                if (!FriendRequestExists(requestId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                    return StatusCode(500);
+                }
+            }
+
+            var updatedFriendRequest = await GetSimpleFriendRequest(existingFriendRequest.FriendRequestId) as OkObjectResult;
+            if (updatedFriendRequest == null)
+            {
+                return StatusCode(500, "Updated friend request could not be found.");
+            }
+            return updatedFriendRequest;
         }
 
         private bool FriendRequestExists(Int64? id)
@@ -184,6 +345,31 @@ namespace ZySocialAPI.Controllers
                 return StatusCode(500);
             }
 
+        }
+
+        [HttpDelete("[action]/{userId}")]
+        public async Task<IActionResult> DeletePotentialFriendRequests(Int64 userId, Int64 friendId)
+        {
+            try
+            {
+                List<FriendRequest> friendRequests = await _context.FriendRequests
+                    .Where(fr => (fr.UserSenderId == userId && fr.UserReceiverId == friendId) || (fr.UserSenderId == friendId && fr.UserReceiverId == userId))
+                    .ToListAsync();
+
+                foreach (FriendRequest fr in friendRequests)
+                {
+                    _context.FriendRequests.Remove(fr);
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                return StatusCode(500, "A server-side error occurred.");
+            }
         }
 
 
