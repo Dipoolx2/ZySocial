@@ -178,10 +178,35 @@ namespace ZySocialAPI.Controllers
             }
         }
 
+        [HttpGet("[action]")]
+        public async Task<ActionResult<UserId>> LoginSimpleUser(string username, string password)
+        {
+            if (String.IsNullOrWhiteSpace(username) || String.IsNullOrWhiteSpace(password))
+            {
+                return new UserId(-1);
+            }
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Password == password &&
+                                                                         u.Name == username); 
+                if (user == null)
+                {
+                    Console.WriteLine("User is null.");
+                    return new UserId(-1);
+                }
+                return new UserId(user.UserId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message + "\n" + e.StackTrace);
+                return new UserId(-1);
+            }
+        }
+
         private bool UserExists(Int64? id)
         {
             return (_context.Users?.Any(e => e.UserId == id)).GetValueOrDefault();
         }
-
+       
     }
 }
