@@ -8,5 +8,5 @@
 import Foundation
 
 func logout() {
-    loggedInUserId = nil
+    loggedInUserId = -1
 }

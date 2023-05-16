@@ -14,6 +14,11 @@ struct LoginView: View {
     @State private var isShowingRegisterView = false
     @State private var errorMessage = ""
     @State private var isLoggedIn = false // added
+    @State private var logUserId: Int64 = -1
+    
+    init(isLoggingOut: Bool) {
+        logout()
+    }
     
     var body: some View {
         NavigationView {
@@ -32,15 +37,18 @@ struct LoginView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 
                 Button(action: {
-                    if login(username: username, password: password) {
-                        print("Logged in as " + getLoggedInName()!)
-                        // Navigate to the main app view
-                        // Replace MainAppView() with the view you want to navigate to
-                        isLoggedIn = true // added
-                    } else {
-                        errorMessage = "Invalid username or password."
+                    async {
+                        let loggedIn = await login(username: username, password: password)
+                        
+                        if loggedIn {
+                            isLoggedIn = true
+                            logUserId = loggedInUserId
+                        } else {
+                            isLoggedIn = false
+                            errorMessage = "Invalid username or password"
+                        }
                     }
-                }, label: {
+                }) {
                     Text("Login")
                         .font(.headline)
                         .foregroundColor(.white)
@@ -48,7 +56,8 @@ struct LoginView: View {
                         .frame(maxWidth: .infinity)
                         .background(Color.blue)
                         .cornerRadius(10)
-                })
+                }
+                .disabled(isLoggedIn)
                 .padding()
                 
                 NavigationLink(destination: RegisterView(), isActive: $isShowingRegisterView) {
@@ -68,7 +77,7 @@ struct LoginView: View {
             }
             .navigationBarTitle("", displayMode: .inline)
             .background(
-                NavigationLink(destination: FeedView(posts: getPosts()), isActive: $isLoggedIn) { // added
+                NavigationLink(destination: FeedView(loggedUserId: logUserId, posts: getPosts()), isActive: $isLoggedIn) { // added
                     EmptyView()
                 }
             )

@@ -52,6 +52,17 @@ struct CreateView: View {
             .padding()
             
             Spacer()
+            
+            Button(action: {
+                resetFields()
+            }, label: {
+                Text("Post")
+                    .fontWeight(.semibold)
+                    .foregroundColor(.blue)
+            })
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.gray.opacity(0.2))
         }
         .sheet(isPresented: $showingImagePicker, onDismiss: loadImage) {
             ImagePicker(image: $image, sourceType: sourceType)
@@ -64,6 +75,7 @@ struct CreateView: View {
                 .foregroundColor(.blue)
         }))
     }
+
     
     func loadImage() {
         guard let inputImage = image else { return }

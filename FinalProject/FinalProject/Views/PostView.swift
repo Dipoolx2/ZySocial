@@ -3,25 +3,20 @@ import SwiftUI
 
 struct PostView: View {
     let post: Post
-    let user: User?
+    @State private var user: User?
     let inFeedView: Bool
     @State private var showingComments = false
     @State private var liked = false
-    
-    init(post: Post, inFeedView: Bool) {
-        self.post = post
-        self.user = findUser(userid: post.userId)
-        self.inFeedView = inFeedView
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                if let username = user?.Name {
+                if let username = user?.name {
                     if inFeedView {
                         NavigationLink(destination: ProfileView(userId: post.userId, posts: getPostsByUserId(userId: post.userId))) { // Provide an empty array for now
                             Text(username)
-                                .font(.headline)}
+                                .font(.headline)
+                        }
                     } else {
                         Text(username)
                             .font(.headline)
@@ -30,12 +25,12 @@ struct PostView: View {
                     if inFeedView {
                         NavigationLink(destination: ProfileView(userId: post.userId, posts: getPostsByUserId(userId: post.userId))) { // Provide an empty array for now
                             Text("User #\(post.userId)")
-                                .font(.headline)}
+                                .font(.headline)
+                        }
                     } else {
                         Text("User #\(post.userId)")
                             .font(.headline)
                     }
-
                 }
                 Spacer()
                 Text(post.postDate, style: .date)
@@ -76,6 +71,18 @@ struct PostView: View {
         .background(Color.white)
         .cornerRadius(10)
         .shadow(radius: 4)
+        .onAppear {
+            fetchUser()
+        }
+    }
+    
+    func fetchUser() {
+        async {
+            let fetchedUser = await findUserRequest(userid: post.userId)
+            DispatchQueue.main.async {
+                self.user = fetchedUser
+            }
+        }
     }
 }
 
