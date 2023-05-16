@@ -61,11 +61,15 @@ struct ProfileView: View {
         }
         .padding()
         .onAppear {
-            let user = findUser(userid: userId)!
-            viewModel.username = findUser(userid: user.UserId)!.Name
-            viewModel.email = user.Email
-            viewModel.phone = user.PhoneNumber
-            viewModel.fetchProfile(urlString: user.ProfilePicture)
+            async {
+                guard let user = await findUserRequest(userid: userId) else {
+                    return
+                }
+                viewModel.username = user.name
+                viewModel.email = user.email
+                viewModel.phone = user.phoneNumber
+                viewModel.fetchProfile(urlString: user.profilePicture)
+            }
         }
         .navigationBarTitle("")
     }

@@ -8,19 +8,19 @@
 import Foundation
 
 struct User: Decodable {
-    var UserId: Int64
-    var Name: String
-    var Password: String
-    var Email: String
-    var ProfilePicture: String
-    var PhoneNumber: String
+    var userId: Int64
+    var name: String
+    var password: String
+    var email: String
+    var profilePicture: String
+    var phoneNumber: String
     
     init(userid: Int64, name: String, pass: String, email: String, profilepicture: String, phonenumber: String) {
-        self.UserId = userid
-        self.Name = name
-        self.Password = pass
-        self.Email = email
-        self.ProfilePicture = profilepicture
-        self.PhoneNumber = phonenumber
+        self.userId = userid
+        self.name = name
+        self.password = pass
+        self.email = email
+        self.profilePicture = profilepicture
+        self.phoneNumber = phonenumber
     }
 }

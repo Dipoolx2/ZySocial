@@ -4,8 +4,15 @@ import SwiftUI
 struct FeedView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var selectedTab = 0
+    var loggedUserId: Int64
     @Binding var posts: [Post]
 
+    init(loggedUserId: Int64, posts: Binding<[Post]>) {
+        self.loggedUserId = loggedInUserId == -1 ? loggedUserId : loggedInUserId
+        self._posts = posts
+        loggedInUserId = self.loggedUserId
+    }
+    
     var body: some View {
         TabView(selection: $selectedTab) {
             NavigationView {
@@ -18,11 +25,9 @@ struct FeedView: View {
                     .padding(.horizontal)
                 }
                 .navigationBarTitle("Feed")
-                .navigationBarBackButtonHidden(true)
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationBarItems(trailing:
                     Button(action: {
-                        logout()
                         presentationMode.wrappedValue.dismiss()
                     }, label: {
                         Text("Logout")
@@ -30,8 +35,15 @@ struct FeedView: View {
                             .padding()
                             .cornerRadius(10)
                     })
+                    .background(
+                        NavigationLink(destination: LoginView(isLoggingOut: true)) {
+                            EmptyView()
+                        }
+                        .hidden() // Hide the link view
+                    )
                 )
             }
+            .navigationBarHidden(true)
             .edgesIgnoringSafeArea(.top)
             .onAppear {
                 selectedTab = 0
@@ -44,7 +56,7 @@ struct FeedView: View {
             NavigationView {
                 CreateView()
                     .navigationBarTitle("Create")
-                    .navigationBarBackButtonHidden(true)
+                    .navigationBarHidden(true) // Hide the navigation bar
             }
             .tabItem {
                 Label("Create", systemImage: "plus.circle")
@@ -52,9 +64,12 @@ struct FeedView: View {
             .tag(1)
             
             NavigationView {
-                ProfileView(userId: loggedInUserId!, posts: getPostsByUserId(userId: loggedInUserId!))
+                
+                ProfileView(userId: loggedUserId, posts: getPostsByUserId(userId: loggedUserId))
                     .navigationBarTitle("My Profile")
-                    .navigationBarBackButtonHidden(true)
+                    .navigationBarBackButtonHidden(true) // Hide the back button
+            
+               
             }
             .tabItem {
                 Label("My Profile", systemImage: "person.crop.circle")

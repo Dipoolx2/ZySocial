@@ -8,25 +8,17 @@
 import Foundation
 import UIKit
 
-func login(username: String, password: String) -> Bool {
-    print("Logging in")
-    var loginUser: User? = findUser(username: username)
-    if let user = loginUser {
-        print("User exists")
-        if verifyPassword(userid: user.UserId, password: password) {
-            print("Password is correct")
-            loggedInUserId = user.UserId
-            return true
-        } else {
-            sendWrongPasswordAlert()
-            return false
-        }
+func login(username: String, password: String) async -> Bool {
+    let result = await loginUserRequest(username: username, password: password)
+    
+    if result != -1 {
+        print("Password is correct")
+        loggedInUserId = result
+        print(loggedInUserId)
+        return true
     } else {
-        sendCouldntFindUserAlert()
         return false
     }
-    // Perform authentication logic here
-    // Return true if the authentication is successful, false otherwise
 }
 
 func sendWrongPasswordAlert() {
@@ -36,3 +28,30 @@ func sendWrongPasswordAlert() {
 func sendCouldntFindUserAlert() {
     print("Couldn't find that user")
 }
+
+func loginUserRequest(username: String, password: String) async -> Int64 {
+    guard let url = URL(string: "https://10.10.137.13:7189/user/LoginSimpleUser?username="+String(username)+"&password="+password) else {
+        return -1
+    }
+    let findUserRequest = URLRequest(url: url)
+    
+    do {
+        let (data, response) = try await URLSessionManager.shared.data(for: findUserRequest)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            return -1
+        }
+        
+        let decoder = JSONDecoder()
+        let userId = try decoder.decode(UserId.self, from: data)
+        return userId.userId
+    } catch {
+        return -1
+    }
+}
+
+struct UserId: Decodable {
+    var userId: Int64
+}
+

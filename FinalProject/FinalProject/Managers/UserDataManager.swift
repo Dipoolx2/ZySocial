@@ -7,60 +7,55 @@
 
 import Foundation
 
-var users: [User] = getUsersFromJson() // API CALL
-
-func findUser(username: String) -> User? {
-    print(username)
-    for user in users {
-        
-        if(user.Name == username) {
-            return user
-        }
-    }
-    return nil
+func getSharedSession() -> URLSession {
+    return URLSessionManager.shared
 }
 
-func findUser(userid: Int64) -> User? {
-    for user in users {
-        if(user.UserId == userid) {
-            return user
-        }
+func findUserRequest(userid: Int64) async -> User? {
+    guard let url = URL(string: "https://10.10.137.13:7189/user/GetSimpleUser/"+String(userid)) else {
+        return nil
     }
-    return nil
-}
-
-func verifyPassword(userid: Int64, password: String) -> Bool {
-    if let user = findUser(userid: userid) {
-        if(user.Password == password) {
-            return true
-        } else {
-            return false
-        }
-    } else {
-        return false
-    }
-}
-
-func updateUsers() {
-    users = getUsersFromJson()
-}
-
-func getUsersFromJson() -> [User] {
-    guard let url = Bundle.main.url(forResource: "User", withExtension: "json") else {
-        // handle error if the file is not found
-        print("User.json file could not be found")
-        return []
-    }
+    let findUserRequest = URLRequest(url: url)
     
     do {
-        let data = try Data(contentsOf: url)
-        print(data)
-        let users = try JSONDecoder().decode([User].self, from: data)
-        return users
+        let (data, response) = try await URLSessionManager.shared.data(for: findUserRequest)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            return nil
+        }
+        
+        let decoder = JSONDecoder()
+        let user = try decoder.decode(User.self, from: data)
+        return user
     } catch {
-        // handle error if the JSON data cannot be parsed
-        print("Json data could not be parsed.")
-        print(error)
-        return []
+        return nil
     }
+}
+
+
+
+class InsecureSessionDelegate: NSObject, URLSessionDelegate {
+    func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
+            completionHandler(.useCredential, URLCredential(trust: challenge.protectionSpace.serverTrust!))
+        }
+    }
+}
+
+enum NetworkError: Error {
+    case invalidURL
+    case invalidResponse
+    case noData
+}
+
+class URLSessionManager {
+    static let shared: URLSession = {
+        let sessionConfig = URLSessionConfiguration.default
+        sessionConfig.urlCache = nil
+        sessionConfig.timeoutIntervalForResource = 30
+
+        let session = URLSession(configuration: sessionConfig, delegate: InsecureSessionDelegate(), delegateQueue: nil)
+        return session
+    }()
 }

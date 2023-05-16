@@ -34,30 +34,50 @@ struct CommentsView: View {
                 }
             }
             List(toDisplay, id: \.CommentId) { comment in
-                HStack(alignment: .center) {
-                    VStack(alignment: .leading) {
-                        if let user: User = findUser(userid: comment.UserId) {
-                            Text(user.Name)
-                                .font(.headline)
-                        } else {
-                            Text("User: \(comment.UserId)")
-                                .font(.headline)
+                CommentRow(comment: comment)
+            }
+        }
+    }
+}
+
+struct CommentRow: View {
+    @State private var user: User?
+    var comment: Comment
+
+    var body: some View {
+        HStack(alignment: .center) {
+            VStack(alignment: .leading) {
+                if let user = user {
+                    Text(user.name)
+                        .font(.headline)
+                } else {
+                    Text("User: \(comment.UserId)")
+                        .font(.headline)
+                        .onAppear {
+                            fetchUser()
                         }
-                        
-                        
-                        Text(comment.Body)
-                            .font(.body)
-                    }
-                    Spacer()
-                    if comment.UserId == loggedInUserId {
-                        Button(action: {
-                            // delete comment
-                        }, label: {
-                            Text("Delete")
-                                .foregroundColor(.red)
-                                .font(.subheadline)
-                        })
-                    }
+                }
+                Text(comment.Body)
+                    .font(.body)
+            }
+            Spacer()
+            if comment.UserId == loggedInUserId {
+                Button(action: {
+                    // delete comment
+                }, label: {
+                    Text("Delete")
+                        .foregroundColor(.red)
+                        .font(.subheadline)
+                })
+            }
+        }
+    }
+    
+    private func fetchUser() {
+        async {
+            if let user = await findUserRequest(userid: comment.UserId) {
+                DispatchQueue.main.async {
+                    self.user = user
                 }
             }
         }

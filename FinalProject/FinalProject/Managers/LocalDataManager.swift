@@ -7,16 +7,18 @@
 
 import Foundation
 
-var loggedInUserId: Int64? = 2
+var loggedInUserId: Int64 = 2
 
 func isLoggedIn() -> Bool {
-    return loggedInUserId == nil
+    return loggedInUserId != -1
 }
 
 func getLoggedInName() -> String? {
-    if let id = loggedInUserId {
-        return findUser(userid: id)?.Name
-    } else {
-        return nil
+    if loggedInUserId != -1 {
+        async {
+            let user = await findUserRequest(userid: loggedInUserId)
+            return user?.name
+        }
     }
+    return nil
 }
