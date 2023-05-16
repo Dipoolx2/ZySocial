@@ -30,6 +30,7 @@ struct FriendshipView: View {
                 .onAppear {
                     async {
                         self.friendRequests = await fetchRequestsLocal(userId: userId) ?? []
+                        self.friends = await fetchFriends(userId: userId) ?? []
                     }
                 }
         }
@@ -63,10 +64,36 @@ struct FriendshipView: View {
     @ViewBuilder
     private var bottomSection: some View {
         VStack {
-            Text("Bottom Section")
-                // Customize the bottom section view here
-                // You can display the list of friend requests or any other content
+            Text("Friends")
+                .font(.headline)
+                .padding(.top, 16)
+            
+            List(friends, id: \.userId) { friend in
+                HStack {
+                    Text(friend.name)
+                    
+                    Spacer()
+                    
+                    Button("Profile") {
+                        // Action to perform when the "Profile" button is tapped
+                        print("Profile tapped for \(friend.name)")
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    
+                    Button("Remove") {
+                        // Action to perform when the "Remove" button is tapped
+                        print("Remove tapped for \(friend.name)")
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    .foregroundColor(.red)
+                }
+            }
+            .listStyle(PlainListStyle())
+            // Customize the list appearance if desired
+            
+            // Add additional content or views below the list if needed
         }
+        .padding(.horizontal)
     }
     
     private func fetchFriendsLocal(userId: Int64) async -> [User]? {
