@@ -10,13 +10,13 @@ import Combine
 
 struct ProfileView: View {
     @StateObject var viewModel: ProfileViewModel
-    @Binding var posts: [Post]
+    @State var posts: [Post]
     let userId: Int64
     
-    init(userId: Int64, posts: Binding<[Post]>) {
+    init(userId: Int64) {
         self.userId = userId
-        self._posts = posts
         _viewModel = StateObject(wrappedValue: ProfileViewModel(userId: userId))
+        self._posts = State(initialValue: [])
     }
     
     var body: some View {
@@ -62,6 +62,8 @@ struct ProfileView: View {
         .padding()
         .onAppear {
             async {
+                posts = await getUserPosts(userId: userId) ?? []
+                
                 guard let user = await findUserRequest(userid: userId) else {
                     return
                 }

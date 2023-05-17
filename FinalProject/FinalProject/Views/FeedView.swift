@@ -5,12 +5,12 @@ struct FeedView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var selectedTab = 0
     var loggedUserId: Int64
-    @Binding var posts: [Post]
+    @State var posts: [Post]
 
-    init(loggedUserId: Int64, posts: Binding<[Post]>) {
+    init(loggedUserId: Int64) {
         self.loggedUserId = loggedInUserId == -1 ? loggedUserId : loggedInUserId
-        self._posts = posts
         loggedInUserId = self.loggedUserId
+        self._posts = State(initialValue: [])
     }
     
     var body: some View {
@@ -74,7 +74,7 @@ struct FeedView: View {
                         .padding()
                     }
                     
-                    ProfileView(userId: loggedUserId, posts: getPostsByUserId(userId: loggedUserId))
+                    ProfileView(userId: loggedUserId)
                         .navigationBarTitle("My Profile")
                         .navigationBarBackButtonHidden(true) // Hide the back button
                 }
@@ -94,5 +94,14 @@ struct FeedView: View {
             .tag(3)
         }
         .accentColor(.blue)
+        .onAppear {
+            Task {
+                let fetchedPosts = await getPostsRequest()
+                DispatchQueue.main.async {
+                    self.posts = fetchedPosts ?? []
+                }
+            }
+        }
     }
+
 }

@@ -8,38 +8,58 @@
 import Foundation
 import SwiftUI
 
-var posts: [Post] = getPostsFromJson() // API CALL
-
-func getPosts() -> Binding<[Post]> {
-    return Binding.constant(posts)
-}
-
-func getPostsByUserId(userId: Int64) -> Binding<[Post]> {
-    var result: [Post] = []
-    for post in posts {
-        if post.userId == userId {
-            result.append(post)
-        }
+func getPostsRequest() async -> [Post]? {
+    print("getting posts")
+    guard let url = URL(string: "https://10.10.137.13:7189/post/GetSimplePosts/") else {
+        
+        return nil
     }
-    return Binding.constant(result)
-}
+    var findPostsRequest = URLRequest(url: url)
 
-func getPostsFromJson() -> [Post] {
-    guard let url = Bundle.main.url(forResource: "Post", withExtension: "json") else {
-        // handle error if the file is not found
-        print("Post.json file could not be found")
-        return []
-    }
-    
     do {
-        let data = try Data(contentsOf: url)
-        print(data)
-        let posts = try JSONDecoder().decode([Post].self, from: data)
+        let (data, response) = try await URLSessionManager.shared.data(for: findPostsRequest)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            return nil
+        }
+        
+        let decoder = JSONDecoder()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        decoder.dateDecodingStrategy = .formatted(formatter)
+        
+        let posts = try decoder.decode([Post].self, from: data)
+        print(posts)
         return posts
     } catch {
-        // handle error if the JSON data cannot be parsed
-        print("Json data could not be parsed.")
-        print(error)
-        return []
+        print("error")
+        return nil
+    }
+}
+
+func getUserPosts(userId: Int64) async -> [Post]? {
+    guard let url = URL(string: "https://10.10.137.13:7189/post/GetUserPosts/" + String(userId)) else {
+        return nil
+    }
+    var findPostsRequest = URLRequest(url: url)
+
+    do {
+        let (data, response) = try await URLSessionManager.shared.data(for: findPostsRequest)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            return nil
+        }
+        
+        let decoder = JSONDecoder()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        decoder.dateDecodingStrategy = .formatted(formatter)
+        
+        let posts = try decoder.decode([Post].self, from: data)
+        return posts
+    } catch {
+        return nil
     }
 }

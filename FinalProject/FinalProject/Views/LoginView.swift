@@ -77,7 +77,7 @@ struct LoginView: View {
             }
             .navigationBarTitle("", displayMode: .inline)
             .background(
-                NavigationLink(destination: FeedView(loggedUserId: logUserId, posts: getPosts()), isActive: $isLoggedIn) { // added
+                NavigationLink(destination: FeedView(loggedUserId: logUserId), isActive: $isLoggedIn) { // added
                     EmptyView()
                 }
             )

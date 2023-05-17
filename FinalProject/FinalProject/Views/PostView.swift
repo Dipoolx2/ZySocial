@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 struct PostView: View {
-    let post: Post
+    var post: Post
     @State private var user: User?
     let inFeedView: Bool
     @State private var showingComments = false
@@ -13,7 +13,7 @@ struct PostView: View {
             HStack {
                 if let username = user?.name {
                     if inFeedView {
-                        NavigationLink(destination: ProfileView(userId: post.userId, posts: getPostsByUserId(userId: post.userId))) { // Provide an empty array for now
+                        NavigationLink(destination: ProfileView(userId: post.userId)) { // Provide an empty array for now
                             Text(username)
                                 .font(.headline)
                         }
@@ -23,7 +23,7 @@ struct PostView: View {
                     }
                 } else {
                     if inFeedView {
-                        NavigationLink(destination: ProfileView(userId: post.userId, posts: getPostsByUserId(userId: post.userId))) { // Provide an empty array for now
+                        NavigationLink(destination: ProfileView(userId: post.userId)) { // Provide an empty array for now
                             Text("User #\(post.userId)")
                                 .font(.headline)
                         }

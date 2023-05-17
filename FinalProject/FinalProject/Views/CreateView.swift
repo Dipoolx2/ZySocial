@@ -17,6 +17,8 @@ struct CreateView: View {
     @State private var showLikes: Bool = true
     @State private var showingImagePicker = false
     @State private var sourceType: UIImagePickerController.SourceType = .photoLibrary
+    @State private var successMessage: String = ""
+    @State private var failureMessage: String = ""
     
     var body: some View {
         VStack {
@@ -51,6 +53,9 @@ struct CreateView: View {
             }
             .padding()
             
+            Text(failureMessage).foregroundColor(.red)
+            Text(successMessage).foregroundColor(.green)
+            
             Spacer()
             
             Button(action: {
@@ -69,6 +74,10 @@ struct CreateView: View {
         }
         .navigationBarItems(trailing: Button(action: {
             resetFields()
+            
+            // Post
+            
+            
         }, label: {
             Text("Post")
                 .fontWeight(.semibold)

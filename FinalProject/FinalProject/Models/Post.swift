@@ -7,7 +7,7 @@ struct Post: Codable, Identifiable, Hashable, Equatable {
     let caption: String
     let showLikes: Bool
     let allowComments: Bool
-    let likeCount: Int
+    var likeCount: Int
     let postDate: Date
     
     init(id: Int64, userId: Int64, image: String?, caption: String, showLikes: Bool, allowComments: Bool, likeCount: Int, postDate: Date) {
@@ -40,7 +40,7 @@ struct Post: Codable, Identifiable, Hashable, Equatable {
     }
     
     private enum CodingKeys: String, CodingKey {
-        case id = "PostId", userId = "UserId", image = "Image", caption = "Caption", showLikes = "ShowLikes", allowComments = "AllowComments", likeCount = "LikeCount", postDate = "PostDate"
+        case id = "postId", userId = "userId", image = "image", caption = "caption", showLikes = "showLikes", allowComments = "allowComments", likeCount = "likeCount", postDate = "postDate"
     }
     
     init(from decoder: Decoder) throws {
@@ -55,7 +55,7 @@ struct Post: Codable, Identifiable, Hashable, Equatable {
         
         let dateString = try container.decode(String.self, forKey: .postDate)
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
         formatter.timeZone = TimeZone(identifier: "UTC")
         if let date = formatter.date(from: dateString) {
             postDate = date
