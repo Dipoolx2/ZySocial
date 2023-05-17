@@ -8,15 +8,15 @@
 import Foundation
 
 struct Comment: Decodable {
-    var CommentId: Int64
-    var UserId: Int64
-    var PostId: Int64
-    var Body: String
+    var commentId: Int64
+    var userId: Int64
+    var postId: Int64
+    var body: String
     
     init(commentid: Int64, userid: Int64, postid: Int64, body: String) {
-        self.CommentId = commentid
-        self.UserId = userid
-        self.PostId = postid
-        self.Body = body
+        self.commentId = commentid
+        self.userId = userid
+        self.postId = postid
+        self.body = body
     }
 }

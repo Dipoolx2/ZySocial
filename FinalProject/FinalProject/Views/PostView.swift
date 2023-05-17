@@ -2,18 +2,20 @@ import Foundation
 import SwiftUI
 
 struct PostView: View {
-    let post: Post
-    @State private var user: User?
+    var userId: Int64
+    var post: Post
+    @State public var commentsInPost: [Comment] = []
+    @State public var user: User?
     let inFeedView: Bool
-    @State private var showingComments = false
-    @State private var liked = false
+    @State public var showingComments = false
+    @State public var liked = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 if let username = user?.name {
                     if inFeedView {
-                        NavigationLink(destination: ProfileView(userId: post.userId, posts: getPostsByUserId(userId: post.userId))) { // Provide an empty array for now
+                        NavigationLink(destination: ProfileView(userId: post.userId)) { // Provide an empty array for now
                             Text(username)
                                 .font(.headline)
                         }
@@ -23,7 +25,7 @@ struct PostView: View {
                     }
                 } else {
                     if inFeedView {
-                        NavigationLink(destination: ProfileView(userId: post.userId, posts: getPostsByUserId(userId: post.userId))) { // Provide an empty array for now
+                        NavigationLink(destination: ProfileView(userId: post.userId)) { // Provide an empty array for now
                             Text("User #\(post.userId)")
                                 .font(.headline)
                         }
@@ -62,7 +64,7 @@ struct PostView: View {
                             .foregroundColor(.blue)
                     }
                     .sheet(isPresented: $showingComments) {
-                        CommentsView(comments: getCommentsInPost(postId: post.id))
+                        CommentsView(comments: commentsInPost, userId: userId, postId: post.id)
                     }
                 }
             }
@@ -73,6 +75,7 @@ struct PostView: View {
         .shadow(radius: 4)
         .onAppear {
             fetchUser()
+            fetchCommentsInPost()
         }
     }
     
@@ -81,6 +84,14 @@ struct PostView: View {
             let fetchedUser = await findUserRequest(userid: post.userId)
             DispatchQueue.main.async {
                 self.user = fetchedUser
+            }
+        }
+    }
+    func fetchCommentsInPost() {
+        async {
+            let fetchedComments = await getCommentsInPost(postId: post.id)
+            DispatchQueue.main.async {
+                self.commentsInPost = fetchedComments ?? []
             }
         }
     }

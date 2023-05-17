@@ -11,12 +11,16 @@ import UIKit
 
 struct CreateView: View {
     
+    var userId: Int64
+    
     @State private var image: UIImage?
     @State private var caption: String = ""
     @State private var allowComments: Bool = true
     @State private var showLikes: Bool = true
     @State private var showingImagePicker = false
     @State private var sourceType: UIImagePickerController.SourceType = .photoLibrary
+    @State private var successMessage: String = ""
+    @State private var failureMessage: String = ""
     
     var body: some View {
         VStack {
@@ -51,10 +55,31 @@ struct CreateView: View {
             }
             .padding()
             
+            Text(failureMessage).foregroundColor(.red)
+            Text(successMessage).foregroundColor(.green)
+            
             Spacer()
             
             Button(action: {
-                resetFields()
+                async {
+                    var imageLink: String? = nil
+                    if image != nil {
+                        let result = await uploadImage(image: image!)
+                        if result != nil {
+                            imageLink = result
+                        }
+                    }
+                    
+                    let result = await makePost(userId:userId, caption:caption, image:imageLink, likes: showLikes, comments: allowComments)
+                    if result {
+                        successMessage = "Successfully made the post."
+                        failureMessage = ""
+                    } else {
+                        successMessage = ""
+                        failureMessage = "Something went wrong."
+                    }
+                    resetFields()
+                }
             }, label: {
                 Text("Post")
                     .fontWeight(.semibold)
@@ -68,7 +93,9 @@ struct CreateView: View {
             ImagePicker(image: $image, sourceType: sourceType)
         }
         .navigationBarItems(trailing: Button(action: {
+            // Post
             resetFields()
+            
         }, label: {
             Text("Post")
                 .fontWeight(.semibold)

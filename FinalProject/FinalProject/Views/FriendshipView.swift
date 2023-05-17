@@ -72,7 +72,7 @@ struct FriendshipView: View {
                             Spacer() // Add spacer here
                             
                             NavigationLink(
-                                destination: ProfileView(userId: request.userSenderId, posts: getPostsByUserId(userId: request.userSenderId))
+                                destination: ProfileView(userId: request.userSenderId)
                             ) {
                                 EmptyView() // Use EmptyView to remove the label
                             }
@@ -133,7 +133,7 @@ struct FriendshipView: View {
                     
                     Spacer()
                     
-                    NavigationLink(destination: ProfileView(userId: friend.userId, posts: getPostsByUserId(userId: friend.userId))) {
+                    NavigationLink(destination: ProfileView(userId: friend.userId)) {
                         
                     }
                     .buttonStyle(BorderlessButtonStyle())

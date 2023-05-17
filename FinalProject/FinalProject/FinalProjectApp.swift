@@ -11,7 +11,7 @@ import SwiftUI
 struct FinalProjectApp: App {
     var body: some Scene {
         WindowGroup {
-            FeedView(loggedUserId: 2, posts: getPosts())
+            FeedView(loggedUserId: 2)
         }
     }
 }
