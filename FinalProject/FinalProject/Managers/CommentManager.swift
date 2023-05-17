@@ -7,45 +7,65 @@
 
 import Foundation
 
-var comments: [Comment] = getCommentsFromJson() // Replace w/ API call
 
-func findComment(id: Int64) -> Comment? {
-    for comment in comments {
-        if comment.CommentId == id {
-            return comment
-        }
-    }
-    return nil
-}
 
 // TODO: notifications, friends, change profile, api connection
 
-func getCommentsInPost(postId: Int64) -> [Comment] {
-    var result: [Comment] = []
-    for comment in comments {
-        if comment.PostId == postId {
-            result.append(comment)
-        }
+func getCommentsInPost(postId: Int64) async -> [Comment]? {
+    guard let url = URL(string: "https://10.10.137.13:7189/comment/GetPostComments/" + String(postId)) else {
+        return nil
     }
-    return result;
-}
+    var findPostsRequest = URLRequest(url: url)
 
-func getCommentsFromJson() -> [Comment] {
-    guard let url = Bundle.main.url(forResource: "Comment", withExtension: "json") else {
-        // handle error if the file is not found
-        print("Comment.json file could not be found")
-        return []
-    }
-    
     do {
-        let data = try Data(contentsOf: url)
-        print(data)
-        let comments = try JSONDecoder().decode([Comment].self, from: data)
+        let (data, response) = try await URLSessionManager.shared.data(for: findPostsRequest)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            return nil
+        }
+        print(data.description)
+
+        let decoder = JSONDecoder()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        decoder.dateDecodingStrategy = .formatted(formatter)
+
+        let comments = try decoder.decode([Comment].self, from: data)
         return comments
     } catch {
-        // handle error if the JSON data cannot be parsed
-        print("Json data could not be parsed.")
-        print(error)
-        return []
+        let errorDescription = "\(error.localizedDescription)"
+        print("Error: \(errorDescription)")
+        return nil
+    }
+}
+
+
+
+func getComments() async -> [Comment]? {
+    guard let url = URL(string: "https://10.10.137.13:7189/comment/GetSimpleComments/") else {
+        return nil
+    }
+    var findPostsRequest = URLRequest(url: url)
+
+    do {
+        let (data, response) = try await URLSessionManager.shared.data(for: findPostsRequest)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            return nil
+        }
+        
+        let decoder = JSONDecoder()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        decoder.dateDecodingStrategy = .formatted(formatter)
+        
+        let comments = try decoder.decode([Comment].self, from: data)
+        print(comments)
+        return comments
+    } catch {
+        print("error")
+        return nil
     }
 }
