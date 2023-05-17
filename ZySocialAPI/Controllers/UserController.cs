@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Permissions;
+using System.Text.RegularExpressions;
 using ZySocialAPI.Data;
 using ZySocialAPI.Models;
 using ZySocialAPI.Models.Custom;
@@ -20,15 +22,7 @@ namespace ZySocialAPI.Controllers
         {
             try
             {
-                var users = await _context.Users.Select(u => new SimpleUser
-                {
-                    UserId = u.UserId,
-                    Name = u.Name,
-                    Password = u.Password,
-                    Email = u.Email,
-                    PhoneNumber = u.PhoneNumber,
-                    ProfilePicture = u.ProfilePicture
-                }).ToListAsync();
+                var users = await _context.Users.Select(u => new SimpleUser(u)).ToListAsync();
 
                 if (users == null)
                 {
@@ -85,6 +79,49 @@ namespace ZySocialAPI.Controllers
             return createdUser;
         }
 
+        [HttpPost("[action]/{username}/{password}/{email}")]
+        public async Task<IActionResult> RegisterNewUser(string username, string password, string email)
+        {
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            {
+                return BadRequest("Invalid input");
+            }
+
+            bool usernameExists = await _context.Users.AnyAsync(u => u.Name == username);
+            if (usernameExists)
+            {
+                return BadRequest("Username already taken");
+            }
+
+            bool emailExists = await _context.Users.AnyAsync(u => u.Email == email);
+            if (emailExists)
+            {
+                return BadRequest("Email already taken");
+            }
+
+            User newUser = new User
+            {
+                Name = username,
+                Password = password,
+                Email = email,
+                PhoneNumber = "",
+                ProfilePicture = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
+            };
+
+            _context.Users.Add(newUser);
+            await _context.SaveChangesAsync();
+
+            var updatedUser = await GetSimpleUser(newUser.UserId) as OkObjectResult;
+            if (updatedUser == null)
+            {
+                Console.WriteLine("ERROR: Updated user with id " + newUser.UserId + " could not be found.");
+                return StatusCode(500, "Updated user could not be found.");
+            }
+
+            return updatedUser;
+        }
+
+
         [HttpGet("[action]/{userId}")]
         public async Task<IActionResult> GetSimpleUser(Int64 userId)
         {
@@ -92,15 +129,7 @@ namespace ZySocialAPI.Controllers
             {
                 var user = await _context.Users
                     .Where(u => u.UserId == userId)
-                    .Select(u => new SimpleUser
-                    {
-                        UserId = u.UserId,
-                        Name = u.Name,
-                        Password = u.Password,
-                        Email = u.Email,
-                        PhoneNumber = u.PhoneNumber,
-                        ProfilePicture = u.ProfilePicture
-                    })
+                    .Select(u => new SimpleUser(u))
                     .FirstOrDefaultAsync();
 
                 if (user == null)
@@ -152,7 +181,78 @@ namespace ZySocialAPI.Controllers
             }
         }
 
+        [HttpPut("[action]/{userId}/{email}")]
+        public async Task<IActionResult> UpdateUserEmail(Int64 userId, String email)
+        {
+            try
+            {
+                bool emailExists = await _context.Users.AnyAsync(u => u.Email == email);
+                if (emailExists)
+                {
+                    return BadRequest("Email already taken");
+                }
 
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+
+                if (existingUser == null)
+                {
+                    return NotFound();
+                }
+
+                existingUser.Email = email;
+
+                await _context.SaveChangesAsync();
+
+                var updatedUser = await GetSimpleUser(existingUser.UserId) as OkObjectResult;
+                if (updatedUser == null)
+                {
+                    Console.WriteLine("ERROR: Updated user with id " + existingUser.UserId + " could not be found.");
+                    return StatusCode(500, "Updated user could not be found.");
+                }
+                return updatedUser;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPut("[action]/{userId}/{phoneNumber}")]
+        public async Task<IActionResult> UpdateUserPhoneNumber(Int64 userId, String phoneNumber)
+        {
+            try
+            {
+                bool isNumeric = Regex.IsMatch(phoneNumber, @"^\d+$");
+                if (!isNumeric)
+                {
+                    return BadRequest("Invalid input");
+                }
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+
+                if (existingUser == null)
+                {
+                    return NotFound();
+                }
+
+                existingUser.PhoneNumber = phoneNumber;
+
+                await _context.SaveChangesAsync();
+
+                var updatedUser = await GetSimpleUser(existingUser.UserId) as OkObjectResult;
+                if (updatedUser == null)
+                {
+                    Console.WriteLine("ERROR: Updated user with id " + existingUser.UserId + " could not be found.");
+                    return StatusCode(500, "Updated user could not be found.");
+                }
+                return updatedUser;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                return StatusCode(500);
+            }
+        }
 
         [HttpDelete("[action]/{userId}")]
         public async Task<IActionResult> DeleteUser(Int64 userId)
