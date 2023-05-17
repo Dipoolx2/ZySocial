@@ -80,9 +80,30 @@ struct ProfileEditView: View {
                     
                     // Change profile picture
                     Button(action: {
-                        // Perform actions when the "Change" button for profile picture is tapped
-                        // You can add your logic here to handle the profile picture change
                         changeProfilePicture()
+                        async {
+                            if image != nil {
+                                let result: String? = await uploadImage(image: image!)
+                                if result != nil {
+                                    let result2: Bool = await updateUserPicture(userId: userId, profilePicture: result!)
+                                    if result2 {
+                                        successMessage = "Successfully updated profile picture."
+                                        errorMessage = ""
+                                        print(result2)
+                                    } else {
+                                        errorMessage = "Something went wrong."
+                                        successMessage = ""
+                                    }
+                                } else {
+                                    errorMessage = "Something went wrong."
+                                    successMessage = ""
+                                    print("Something went wrong uploading image.")
+                                }
+                            } else {
+                                print("Can't set pfp to an empty image")
+                            }
+                            
+                        }
                     }) {
                         Text("Change")
                             .foregroundColor(.white)

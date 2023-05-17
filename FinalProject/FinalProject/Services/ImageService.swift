@@ -32,7 +32,7 @@ private func uploadImageToImgur(image: UIImage) async throws -> String? {
     var request = URLRequest(url: url)
     request.httpMethod = "POST"
     
-    request.setValue("Client-ID \()", forHTTPHeaderField: "Authorization") // Replace YOUR_CLIENT_ID with the actual client ID obtained from Imgur.
+    request.setValue("Client-ID \(clientId)", forHTTPHeaderField: "Authorization") // Replace YOUR_CLIENT_ID with the actual client ID obtained from Imgur.
     request.httpBody = imageData
     
     let (data, _) = try await URLSession.shared.data(for: request)

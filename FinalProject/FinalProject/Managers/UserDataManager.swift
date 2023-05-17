@@ -71,6 +71,28 @@ func updateUserPhoneNumber(userId: Int64, phoneNumber: String) async -> Bool {
     }
 }
 
+func updateUserPicture(userId: Int64, profilePicture: String) async -> Bool {
+    let pictureTag:String = String(profilePicture.dropFirst(20))
+    print("picture tag: " + pictureTag)
+    guard let url = URL(string: "https://10.10.137.13:7189/user/UpdateUserPicture/" + String(userId) + "/" + pictureTag) else {
+        return false
+    }
+    var request = URLRequest(url: url)
+    request.httpMethod = "PUT"
+    
+    do {
+        let (data, response) = try await URLSessionManager.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            return false
+        }
+        
+        return true
+    } catch {
+        return false
+    }
+}
+
 class InsecureSessionDelegate: NSObject, URLSessionDelegate {
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
