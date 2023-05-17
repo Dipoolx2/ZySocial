@@ -15,18 +15,78 @@ namespace ZySocialAPI.Controllers
             this._context = context;
         }
 
+        [HttpPost("[action]/{postId}/{userId}/{body}")]
+        public async Task<IActionResult> PostComment(Int64 postId, Int64 userId, String body)
+        {
+            if (_context.Users == null)
+            {
+                return Problem("Entity set 'ZySocialDbContext.Users' is null.");
+            }
+
+            Comment newComment = new Comment();
+            newComment.PostId = postId;
+            newComment.Body = body;
+            newComment.UserId = userId;
+
+            _context.Comments.Add(newComment);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                if (CommentExists(newComment.CommentId))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                    return StatusCode(500);
+                }
+            }
+
+            var createdComment = await GetSimpleComment(newComment.CommentId) as OkObjectResult;
+            if (createdComment == null)
+            {
+                Console.WriteLine("ERROR: Newly created comment with id " + newComment.CommentId + " could not be found.");
+                return StatusCode(500, "Newly created comment could not be found.");
+            }
+            return createdComment;
+        }
+
+
+        [HttpGet("[action]/{postId}")]
+        public async Task<IActionResult> GetPostComments(Int64 postId)
+        {
+            try
+            {
+                var comments = await _context.Comments
+                    .Where(c => c.PostId == postId)
+                    .Select(c => new SimpleComment(c))
+                    .ToListAsync();
+
+                if (comments == null || comments.Count == 0)
+                {
+                    return NotFound();
+                }
+
+                return Ok(comments);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                return StatusCode(500, "A server-side error occurred.");
+            }
+        }
+
+
         [HttpGet("[action]")]
         public async Task<IActionResult> GetSimpleComments()
         {
             try
             {
-                var commments = await _context.Comments.Select(c => new SimpleComment
-                {
-                    UserId = c.UserId,
-                    CommentId = c.CommentId,
-                    PostId = c.PostId,
-                    Body = c.Body,
-                }).ToListAsync();
+                var commments = await _context.Comments.Select(c => new SimpleComment(c)).ToListAsync();
 
                 if (commments == null)
                 {
@@ -53,13 +113,7 @@ namespace ZySocialAPI.Controllers
                     return NotFound();
                 }
 
-                var simpleComment = new SimpleComment
-                {
-                    CommentId = comment.CommentId,
-                    UserId = comment.UserId,
-                    Body = comment.Body,
-                    PostId = comment.PostId
-                };
+                var simpleComment = new SimpleComment(comment);
 
                 return Ok(simpleComment);
             }

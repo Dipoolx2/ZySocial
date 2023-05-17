@@ -2,6 +2,17 @@
 {
     public class SimplePost
     {
+        public SimplePost(Post post)
+        {
+            this.PostId = post.PostId;
+            this.UserId = post.UserId;
+            this.Image = post.Image;
+            this.Caption = post.Caption;
+            this.ShowLikes = post.ShowLikes;
+            this.AllowComments = post.AllowComments;
+            this.LikeCount = post.LikeCount;
+            this.PostDate = post.PostDate;
+        }
         public Int64 PostId { get; set; }
         public Int64 UserId { get; set; }
         public String? Image { get; set; }
