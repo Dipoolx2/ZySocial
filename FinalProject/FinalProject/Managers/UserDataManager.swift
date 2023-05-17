@@ -33,7 +33,43 @@ func findUserRequest(userid: Int64) async -> User? {
     }
 }
 
+func updateUserEmail(userId: Int64, email: String) async -> Bool {
+    guard let url = URL(string: "https://10.10.137.13:7189/user/UpdateUserEmail/" + String(userId) + "/" + email) else {
+        return false
+    }
+    var findFriendRequestsRequest = URLRequest(url: url)
+    findFriendRequestsRequest.httpMethod = "PUT"
+    do {
+        let (data, response) = try await URLSessionManager.shared.data(for: findFriendRequestsRequest)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            return false
+        }
+        return true
+    } catch {
+        return false
+    }
+}
 
+func updateUserPhoneNumber(userId: Int64, phoneNumber: String) async -> Bool {
+    guard let url = URL(string: "https://10.10.137.13:7189/user/UpdateUserPhoneNumber/" + String(userId) + "/" + phoneNumber) else {
+        return false
+    }
+    var findFriendRequestsRequest = URLRequest(url: url)
+    findFriendRequestsRequest.httpMethod = "PUT"
+    do {
+        let (data, response) = try await URLSessionManager.shared.data(for: findFriendRequestsRequest)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            return false
+        }
+        return true
+    } catch {
+        return false
+    }
+}
 
 class InsecureSessionDelegate: NSObject, URLSessionDelegate {
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {

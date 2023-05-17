@@ -13,9 +13,12 @@ struct ProfileEditView: View {
     @State private var email: String = ""
     @State private var phoneNumber: String = ""
     @State private var selectedProfilePicture: String = ""
-    
+    @State private var errorMessage: String = ""
+    @State private var successMessage: String = ""
     var body: some View {
         VStack {
+            Text(successMessage).foregroundColor(.green)
+            Text(errorMessage).foregroundColor(.red).padding()
             VStack {
                 HStack {
                     TextField("Change Email", text: $email)
@@ -25,7 +28,16 @@ struct ProfileEditView: View {
                     Button(action: {
                         // Perform actions when the "Change Email" button is tapped
                         // You can add your logic here to handle the email change
-                        updateEmail()
+                        async {
+                            var response = await updateUserEmail(userId:userId, email:email)
+                            if response {
+                                successMessage = "Email changed successfully."
+                                errorMessage = ""
+                            } else {
+                                errorMessage = "Invalid email. Try picking another."
+                                successMessage = ""
+                            }
+                        }
                     }) {
                         Text("Change")
                             .foregroundColor(.white)
@@ -44,7 +56,16 @@ struct ProfileEditView: View {
                     Button(action: {
                         // Perform actions when the "Change Phone Number" button is tapped
                         // You can add your logic here to handle the phone number change
-                        updatePhoneNumber()
+                        async {
+                            var response = await updateUserPhoneNumber(userId:userId, phoneNumber:phoneNumber)
+                            if response {
+                                successMessage = "Phone number changed successfully."
+                                errorMessage = ""
+                            } else {
+                                errorMessage = "Invalid phone number. Try picking another."
+                                successMessage = ""
+                            }
+                        }
                     }) {
                         Text("Change")
                             .foregroundColor(.white)
@@ -74,11 +95,6 @@ struct ProfileEditView: View {
                 }
             }
         }
-    }
-    
-    private func updateEmail() {
-        // Implement the logic to update the user's email
-        // using the `email` property
     }
     
     private func updatePhoneNumber() {
