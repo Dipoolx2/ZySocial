@@ -180,6 +180,38 @@ namespace ZySocialAPI.Controllers
                 return StatusCode(500);
             }
         }
+        
+        [HttpPut("[action]/{userId}/{extension}")]
+        public async Task<IActionResult> UpdateUserPicture(Int64 userId, string extension)
+        {
+            try
+            {
+
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+
+                if (existingUser == null)
+                {
+                    return NotFound();
+                }
+
+                existingUser.ProfilePicture = "https://i.imgur.com/"+extension;
+
+                await _context.SaveChangesAsync();
+
+                var updatedUser = await GetSimpleUser(existingUser.UserId) as OkObjectResult;
+                if (updatedUser == null)
+                {
+                    Console.WriteLine("ERROR: Updated user with id " + existingUser.UserId + " could not be found.");
+                    return StatusCode(500, "Updated user could not be found.");
+                }
+                return updatedUser;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                return StatusCode(500);
+            }
+        }
 
         [HttpPut("[action]/{userId}/{email}")]
         public async Task<IActionResult> UpdateUserEmail(Int64 userId, String email)
