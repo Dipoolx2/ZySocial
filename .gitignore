@@ -3,3 +3,4 @@
 ################################################################################
 
 /ZySocialAPI/Data/ZySocialDbContext.cs
+/ZySocialAPI/ImgurSecrets.cs
