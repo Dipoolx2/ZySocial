@@ -33,6 +33,7 @@ struct FriendshipView: View {
                         self.friends = await fetchFriends(userId: userId) ?? []
                     }
                 }
+            
         }
         .alignmentGuide(.top) { _ in 0 } // Align to the top
     }
@@ -50,16 +51,74 @@ struct FriendshipView: View {
                 Button("Send") {
                     // Action to perform when the Send button is tapped
                     print("Send to " + searchText)
+                    async {
+                        var result = await sendFriendRequestToName(userId: userId, receiverName: searchText)
+                        searchText = ""
+                    }
                 }
                 .padding(.horizontal)
             }
             .padding(.top) // Add top padding to the HStack
             
-            Spacer() // Add a spacer to push the content to the top
-            
+            // List of friend requests
+            List {
+                Section(header: Text("Friend Requests").font(.headline)) {
+                    ForEach(friendRequests, id: \.friendRequestId) { request in
+                        HStack {
+                            AsyncText(userId: request.userSenderId)
+                                .font(.subheadline) // Use a different font style
+                                .foregroundColor(.primary) // Reset the foreground color
+                            
+                            Spacer() // Add spacer here
+                            
+                            NavigationLink(
+                                destination: ProfileView(userId: request.userSenderId, posts: getPostsByUserId(userId: request.userSenderId))
+                            ) {
+                                EmptyView() // Use EmptyView to remove the label
+                            }
+                            .frame(width: 0) // Set width to 0 to make the navigation link invisible
+                            
+                            Button(action: {
+                                // Action to perform when Accept button is tapped
+                                print("Accept tapped for \(request.userSenderId)")
+                                async {
+                                    print("Accepting")
+                                    await handleFriendRequest(requestId: request.friendRequestId, accepted: true)
+                                    await friends.append(findUserRequest(userid: request.userSenderId)!)
+                                    friendRequests.removeAll(where: {$0.friendRequestId == request.friendRequestId })
+                                }
+                                
+                            }) {
+                                Text("Accept")
+                                    .foregroundColor(.green)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                            }
+                            .buttonStyle(PlainButtonStyle()) // Add buttonStyle
+                            
+                            Button(action: {
+                                // Action to perform when Reject button is tapped
+                                print("Reject tapped for \(request.userSenderId)")
+                                async {
+                                    await handleFriendRequest(requestId: request.friendRequestId, accepted: false)
+                                    friendRequests.removeAll(where: {$0.friendRequestId == request.friendRequestId })
+                                }
+                            }) {
+                                Text("Reject")
+                                    .foregroundColor(.red)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                            }
+                            .buttonStyle(PlainButtonStyle()) // Add buttonStyle
+                        }
+                    }
+                }
+            }
+            .listStyle(PlainListStyle()) // Apply list style to match the bottom list
+            .padding(.top, 8) // Add some padding between the search bar and the list
+            .frame(maxHeight: .infinity) // Adjust the height to fill the remaining space
         }
     }
-
     
     @ViewBuilder
     private var bottomSection: some View {
@@ -74,15 +133,18 @@ struct FriendshipView: View {
                     
                     Spacer()
                     
-                    Button("Profile") {
-                        // Action to perform when the "Profile" button is tapped
-                        print("Profile tapped for \(friend.name)")
+                    NavigationLink(destination: ProfileView(userId: friend.userId, posts: getPostsByUserId(userId: friend.userId))) {
+                        
                     }
                     .buttonStyle(BorderlessButtonStyle())
                     
                     Button("Remove") {
                         // Action to perform when the "Remove" button is tapped
                         print("Remove tapped for \(friend.name)")
+                        async {
+                            await removeFriend(userId: userId, friendId: friend.userId)
+                            friends.removeAll(where: { $0.userId == friend.userId })
+                        }
                     }
                     .buttonStyle(BorderlessButtonStyle())
                     .foregroundColor(.red)
@@ -110,5 +172,20 @@ struct FriendshipView: View {
             return fetchedFriendRequests
         }
         return []
+    }
+}
+
+struct AsyncText: View {
+    var userId: Int64
+    
+    @State private var senderName: String = ""
+    
+    var body: some View {
+        Text(senderName)
+            .task {
+                if let sender = await findUserRequest(userid: userId) {
+                    senderName = sender.name
+                }
+            }
     }
 }

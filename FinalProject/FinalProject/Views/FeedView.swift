@@ -64,15 +64,26 @@ struct FeedView: View {
             .tag(1)
             
             NavigationView {
-                ProfileView(userId: loggedUserId, posts: getPostsByUserId(userId: loggedUserId))
-                    .navigationBarTitle("My Profile")
-                    .navigationBarBackButtonHidden(true) // Hide the back button
+                VStack {
+                    HStack {
+                        Spacer()
+                        NavigationLink(destination: ProfileEditView(userId: loggedUserId)) {
+                            Text("Edit")
+                                .foregroundColor(.blue)
+                        }
+                        .padding()
+                    }
+                    
+                    ProfileView(userId: loggedUserId, posts: getPostsByUserId(userId: loggedUserId))
+                        .navigationBarTitle("My Profile")
+                        .navigationBarBackButtonHidden(true) // Hide the back button
+                }
             }
             .tabItem {
                 Label("My Profile", systemImage: "person.crop.circle")
             }
             .tag(2)
-            
+            .tag(2)
             NavigationView {
                 FriendshipView(userId: loggedUserId)
                     .navigationBarTitle("Friendships")
