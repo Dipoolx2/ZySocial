@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System.Globalization;
 using ZySocialAPI.Data;
 using ZySocialAPI.Models;
 using ZySocialAPI.Models.Custom;
@@ -21,17 +24,7 @@ namespace ZySocialAPI.Controllers
         {
             try
             {
-                var posts = await _context.Posts.Select(p => new SimplePost
-                {
-                    UserId = p.UserId,
-                    PostId = p.PostId,
-                    Image = p.Image,
-                    Caption = p.Caption,
-                    ShowLikes = p.ShowLikes,
-                    AllowComments = p.AllowComments,
-                    LikeCount = p.LikeCount,
-                    PostDate = p.PostDate
-                }).ToListAsync();
+                var posts = await _context.Posts.Select(p => new SimplePost(p)).ToListAsync();
 
                 if (posts == null)
                 {
@@ -45,6 +38,75 @@ namespace ZySocialAPI.Controllers
                 return StatusCode(500, "A server-side error occurred.");
             }
 
+        }
+
+        [HttpPost("[action]/{userId}/{caption}/{image}/{likes}/{comments}")]
+        public async Task<IActionResult> NewPost(Int64 userId, string caption, string? image, bool likes, bool comments)
+        {
+            if (_context.Users == null)
+            {
+                return Problem("Entity set 'ZySocialDbContext.Users' is null.");
+            }
+
+            Post newPost = new Post();
+            newPost.UserId = userId;
+            newPost.Image = (image == "null" ? null : "https://i.imgur.com/"+image);
+            newPost.Caption = caption;
+            newPost.ShowLikes = likes;
+            newPost.AllowComments = comments;
+            newPost.LikeCount = 0;
+            string formattedDateTime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+            newPost.PostDate = DateTime.ParseExact(formattedDateTime, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
+
+            _context.Posts.Add(newPost);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                if (PostExists(newPost.PostId))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                    return StatusCode(500);
+                }
+            }
+
+            var createdPost = await GetSimplePost(newPost.PostId) as OkObjectResult;
+            if (createdPost == null)
+            {
+                Console.WriteLine("ERROR: Newly created post with id " + newPost.PostId + " could not be found.");
+                return StatusCode(500, "Newly created post could not be found.");
+            }
+            return createdPost;
+        }
+
+        [HttpGet("[action]/{userId}")]
+        public async Task<IActionResult> GetUserPosts(Int64 userId)
+        {
+            try
+            {
+                var posts = await _context.Posts
+                    .Where(p => p.UserId == userId)
+                    .Select(p => new SimplePost(p))
+                    .ToListAsync();
+
+                if (posts == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                return StatusCode(500, "A server-side error occurred.");
+            }
         }
 
         [HttpPost("[action]")]
@@ -108,17 +170,7 @@ namespace ZySocialAPI.Controllers
                     return NotFound();
                 }
 
-                var simplePost = new SimplePost
-                {
-                    UserId = post.UserId,
-                    PostId = post.PostId,
-                    Image = post.Image,
-                    Caption = post.Caption,
-                    ShowLikes = post.ShowLikes,
-                    AllowComments = post.AllowComments,
-                    LikeCount = post.LikeCount,
-                    PostDate = post.PostDate
-                };
+                var simplePost = new SimplePost(post);
 
                 return Ok(simplePost);
             }
