@@ -10,15 +10,26 @@ import SwiftUI
 
 struct ProfileEditView: View {
     var userId: Int64
+    
+    @State private var image: UIImage?
+    @State private var showingImagePicker = false
+    @State private var sourceType: UIImagePickerController.SourceType = .photoLibrary
+    
     @State private var email: String = ""
     @State private var phoneNumber: String = ""
     @State private var selectedProfilePicture: String = ""
     @State private var errorMessage: String = ""
     @State private var successMessage: String = ""
+    
     var body: some View {
         VStack {
-            Text(successMessage).foregroundColor(.green)
-            Text(errorMessage).foregroundColor(.red).padding()
+            Text(successMessage)
+                .foregroundColor(.green)
+            
+            Text(errorMessage)
+                .foregroundColor(.red)
+                .padding()
+            
             VStack {
                 HStack {
                     TextField("Change Email", text: $email)
@@ -28,16 +39,7 @@ struct ProfileEditView: View {
                     Button(action: {
                         // Perform actions when the "Change Email" button is tapped
                         // You can add your logic here to handle the email change
-                        async {
-                            var response = await updateUserEmail(userId:userId, email:email)
-                            if response {
-                                successMessage = "Email changed successfully."
-                                errorMessage = ""
-                            } else {
-                                errorMessage = "Invalid email. Try picking another."
-                                successMessage = ""
-                            }
-                        }
+                        updateEmail()
                     }) {
                         Text("Change")
                             .foregroundColor(.white)
@@ -56,16 +58,7 @@ struct ProfileEditView: View {
                     Button(action: {
                         // Perform actions when the "Change Phone Number" button is tapped
                         // You can add your logic here to handle the phone number change
-                        async {
-                            var response = await updateUserPhoneNumber(userId:userId, phoneNumber:phoneNumber)
-                            if response {
-                                successMessage = "Phone number changed successfully."
-                                errorMessage = ""
-                            } else {
-                                errorMessage = "Invalid phone number. Try picking another."
-                                successMessage = ""
-                            }
-                        }
+                        updatePhoneNumber()
                     }) {
                         Text("Change")
                             .foregroundColor(.white)
@@ -77,13 +70,19 @@ struct ProfileEditView: View {
                 }
                 
                 HStack {
-                    Text("Select new profile picture")
-                        .padding()
-                    
+                    // Select new profile picture
                     Button(action: {
-                        // Perform actions when the "Change Profile Picture" button is tapped
+                        showingImagePicker = true
+                    }) {
+                        Text("Select new profile picture")
+                    }
+                    .padding(.trailing)
+                    
+                    // Change profile picture
+                    Button(action: {
+                        // Perform actions when the "Change" button for profile picture is tapped
                         // You can add your logic here to handle the profile picture change
-                        selectProfilePicture()
+                        changeProfilePicture()
                     }) {
                         Text("Change")
                             .foregroundColor(.white)
@@ -94,7 +93,23 @@ struct ProfileEditView: View {
                     .padding(.trailing)
                 }
             }
+            
+            .sheet(isPresented: $showingImagePicker, onDismiss: loadImage) {
+                ImagePicker(image: $image, sourceType: sourceType)
+            }
+            
+            if let image = image {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .padding()
+            }
         }
+    }
+    
+    private func updateEmail() {
+        // Implement the logic to update the user's email
+        // using the `email` property
     }
     
     private func updatePhoneNumber() {
@@ -102,8 +117,14 @@ struct ProfileEditView: View {
         // using the `phoneNumber` property
     }
     
-    private func selectProfilePicture() {
-        // Implement the logic to select a new profile picture
-        // You can add your own implementation or use a library/component for picking images
+    private func changeProfilePicture() {
+        // Implement the logic to change the user's profile picture
+        // using the `image` property
+    }
+    
+    private func loadImage() {
+        guard let inputImage = image else { return }
+        let fixedImage = inputImage.fixedOrientation()
+        image = fixedImage
     }
 }
