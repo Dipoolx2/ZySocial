@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Permissions;
+using System.Text.RegularExpressions;
 using ZySocialAPI.Data;
 using ZySocialAPI.Models;
 using ZySocialAPI.Models.Custom;
@@ -216,7 +217,42 @@ namespace ZySocialAPI.Controllers
                 return StatusCode(500);
             }
         }
-    
+
+        [HttpPut("[action]/{userId}/{phoneNumber}")]
+        public async Task<IActionResult> UpdateUserPhoneNumber(Int64 userId, String phoneNumber)
+        {
+            try
+            {
+                bool isNumeric = Regex.IsMatch(phoneNumber, @"^\d+$");
+                if (!isNumeric)
+                {
+                    return BadRequest("Invalid input");
+                }
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+
+                if (existingUser == null)
+                {
+                    return NotFound();
+                }
+
+                existingUser.PhoneNumber = phoneNumber;
+
+                await _context.SaveChangesAsync();
+
+                var updatedUser = await GetSimpleUser(existingUser.UserId) as OkObjectResult;
+                if (updatedUser == null)
+                {
+                    Console.WriteLine("ERROR: Updated user with id " + existingUser.UserId + " could not be found.");
+                    return StatusCode(500, "Updated user could not be found.");
+                }
+                return updatedUser;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                return StatusCode(500);
+            }
+        }
 
         [HttpDelete("[action]/{userId}")]
         public async Task<IActionResult> DeleteUser(Int64 userId)
