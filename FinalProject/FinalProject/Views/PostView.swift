@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 
 struct PostView: View {
+    var userId: Int64
     var post: Post
     @State private var user: User?
     let inFeedView: Bool
@@ -62,7 +63,7 @@ struct PostView: View {
                             .foregroundColor(.blue)
                     }
                     .sheet(isPresented: $showingComments) {
-                        CommentsView(comments: getCommentsInPost(postId: post.id))
+                        CommentsView(comments: getCommentsInPost(postId: post.id), userId: userId)
                     }
                 }
             }

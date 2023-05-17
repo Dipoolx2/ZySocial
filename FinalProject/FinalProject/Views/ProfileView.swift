@@ -50,8 +50,8 @@ struct ProfileView: View {
             Divider() // add a horizontal separator
             ScrollView {
                 LazyVStack(spacing: 10) {
-                    ForEach(posts) { post in
-                        PostView(post: post, inFeedView: false)
+                    ForEach(posts.sorted(by: { $0.postDate > $1.postDate })) { post in
+                        PostView(userId: userId, post: post, inFeedView: false)
                     }
                 }
                 .padding(.horizontal)

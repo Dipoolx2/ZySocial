@@ -2,13 +2,14 @@ import Foundation
 import SwiftUI
 
 struct CommentsView: View {
-    @State private var isShowingCreateCommentAlert = false
     @State private var newCommentText = ""
+    var userId: Int64
     
     var toDisplay: [Comment]
 
-    init(comments: [Comment]) {
+    init(comments: [Comment], userId: Int64) {
         self.toDisplay = comments
+        self.userId = userId
     }
 
     var body: some View {
@@ -16,25 +17,8 @@ struct CommentsView: View {
             Text("Comments")
                 .font(.title)
                 .padding()
-            HStack {
-                Spacer()
-                Button(action: {
-                    self.isShowingCreateCommentAlert = true
-                }, label: {
-                    Text("Add Comment")
-                        .foregroundColor(.blue)
-                        .font(.subheadline)
-                })
-                .padding()
-                .alert(isPresented: $isShowingCreateCommentAlert) {
-                    Alert(title: Text("New Comment"), message: Text("Enter your comment below:"), primaryButton: .cancel(), secondaryButton: .default(Text("Save"), action: {
-                        // save the new comment
-                        newCommentText = ""
-                    }))
-                }
-            }
             List(toDisplay, id: \.CommentId) { comment in
-                CommentRow(comment: comment)
+                CommentRow(comment: comment, userId: userId)
             }
         }
     }
@@ -43,6 +27,7 @@ struct CommentsView: View {
 struct CommentRow: View {
     @State private var user: User?
     var comment: Comment
+    var userId: Int64
 
     var body: some View {
         HStack(alignment: .center) {
@@ -61,9 +46,12 @@ struct CommentRow: View {
                     .font(.body)
             }
             Spacer()
-            if comment.UserId == loggedInUserId {
+            if comment.UserId == userId {
                 Button(action: {
                     // delete comment
+                    async {
+                        await deleteCommentRequest(commentId: comment.CommentId)
+                    }
                 }, label: {
                     Text("Delete")
                         .foregroundColor(.red)

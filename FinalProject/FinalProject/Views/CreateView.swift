@@ -11,6 +11,8 @@ import UIKit
 
 struct CreateView: View {
     
+    var userId: Int64
+    
     @State private var image: UIImage?
     @State private var caption: String = ""
     @State private var allowComments: Bool = true
@@ -59,7 +61,25 @@ struct CreateView: View {
             Spacer()
             
             Button(action: {
-                resetFields()
+                async {
+                    var imageLink: String? = nil
+                    if image != nil {
+                        let result = await uploadImage(image: image!)
+                        if result != nil {
+                            imageLink = result
+                        }
+                    }
+                    
+                    let result = await makePost(userId:userId, caption:caption, image:imageLink, likes: showLikes, comments: allowComments)
+                    if result {
+                        successMessage = "Successfully made the post."
+                        failureMessage = ""
+                    } else {
+                        successMessage = ""
+                        failureMessage = "Something went wrong."
+                    }
+                    resetFields()
+                }
             }, label: {
                 Text("Post")
                     .fontWeight(.semibold)
@@ -73,10 +93,8 @@ struct CreateView: View {
             ImagePicker(image: $image, sourceType: sourceType)
         }
         .navigationBarItems(trailing: Button(action: {
-            resetFields()
-            
             // Post
-            
+            resetFields()
             
         }, label: {
             Text("Post")

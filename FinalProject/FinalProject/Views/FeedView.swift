@@ -12,14 +12,14 @@ struct FeedView: View {
         loggedInUserId = self.loggedUserId
         self._posts = State(initialValue: [])
     }
-    
+
     var body: some View {
         TabView(selection: $selectedTab) {
             NavigationView {
                 ScrollView {
                     LazyVStack(spacing: 10) {
-                        ForEach(posts) { post in
-                            PostView(post: post, inFeedView: true)
+                        ForEach(posts.sorted(by: { $0.postDate > $1.postDate })) { post in
+                            PostView(userId: loggedUserId, post: post, inFeedView: true)
                         }
                     }
                     .padding(.horizontal)
@@ -45,16 +45,23 @@ struct FeedView: View {
             }
             .navigationBarHidden(true)
             .edgesIgnoringSafeArea(.top)
-            .onAppear {
-                selectedTab = 0
+            .onChange(of: selectedTab) { newTab in
+                if newTab == 0 {
+                    Task {
+                        let fetchedPosts = await getPostsRequest()
+                        DispatchQueue.main.async {
+                            self.posts = fetchedPosts ?? []
+                        }
+                    }
+                }
             }
             .tabItem {
                 Label("Feed", systemImage: "list.dash")
             }
             .tag(0)
-            
+
             NavigationView {
-                CreateView()
+                CreateView(userId: loggedUserId)
                     .navigationBarTitle("Create")
                     .navigationBarHidden(true) // Hide the navigation bar
             }
@@ -62,7 +69,7 @@ struct FeedView: View {
                 Label("Create", systemImage: "plus.circle")
             }
             .tag(1)
-            
+
             NavigationView {
                 VStack {
                     HStack {
@@ -73,7 +80,7 @@ struct FeedView: View {
                         }
                         .padding()
                     }
-                    
+
                     ProfileView(userId: loggedUserId)
                         .navigationBarTitle("My Profile")
                         .navigationBarBackButtonHidden(true) // Hide the back button
@@ -83,7 +90,7 @@ struct FeedView: View {
                 Label("My Profile", systemImage: "person.crop.circle")
             }
             .tag(2)
-            .tag(2)
+
             NavigationView {
                 FriendshipView(userId: loggedUserId)
                     .navigationBarTitle("Friendships")
@@ -95,6 +102,7 @@ struct FeedView: View {
         }
         .accentColor(.blue)
         .onAppear {
+            selectedTab = 0
             Task {
                 let fetchedPosts = await getPostsRequest()
                 DispatchQueue.main.async {
@@ -103,5 +111,4 @@ struct FeedView: View {
             }
         }
     }
-
 }

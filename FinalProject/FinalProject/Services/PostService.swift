@@ -8,6 +8,8 @@
 import Foundation
 
 func makePost(userId: Int64, caption: String, image: String?, likes: Bool, comments: Bool) async -> Bool {
+    print("Making post")
+    
     let pictureTag: String? = image != nil ? String(image!.dropFirst(20)) : nil
     let likesString = String(likes)
     let commentsString = String(comments)
