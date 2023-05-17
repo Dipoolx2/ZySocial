@@ -75,15 +75,7 @@ namespace ZySocialAPI.Controllers
                     {
                         var friend = await _context.Users
                             .Where(u => u.UserId == friendUserId)
-                            .Select(u => new SimpleUser
-                            {
-                                UserId = u.UserId,
-                                Name = u.Name,
-                                Password = u.Password,
-                                Email = u.Email,
-                                PhoneNumber = u.PhoneNumber,
-                                ProfilePicture = u.ProfilePicture
-                            })
+                            .Select(u => new SimpleUser(u))
                             .FirstOrDefaultAsync();
 
                         if (friend == null)
@@ -196,6 +188,38 @@ namespace ZySocialAPI.Controllers
             return Ok(returnRequest);
         }
 
+        [HttpPost("[action]/{senderId}/{receiverName}")]
+        public async Task<IActionResult> SendFriendRequestToName(Int64 senderId, String receiverName)
+        {
+            if (_context.Users == null)
+            {
+                return Problem("Entity set 'ZySocialDbContext.Users' is null.");
+            }
+
+            User? receiver = await _context.Users
+                .FirstOrDefaultAsync(u => u.Name == receiverName);
+
+            if (receiver == null)
+            {
+                return NotFound("Receiver not found.");
+            }
+
+            FriendRequest newFriendRequest = new FriendRequest
+            {
+                UserSenderId = senderId,
+                UserReceiverId = receiver.UserId,
+                SendDate = DateTime.Now,
+                Accepted = false,
+                Responded = false
+            };
+
+            _context.FriendRequests.Add(newFriendRequest);
+            await _context.SaveChangesAsync();
+
+            return Ok(new SimpleUser(receiver));
+        }
+
+
         [HttpPost("[action]")]
         public async Task<IActionResult> PostSimpleFriendRequest([FromBody]SimpleFriendRequest simpleFriendRequest)
         {
@@ -277,15 +301,7 @@ namespace ZySocialAPI.Controllers
             {
                 var user = await _context.Users
                     .Where(u => u.UserId == existingFriendRequest.UserSenderId)
-                    .Select(u => new SimpleUser
-                    {
-                        UserId = u.UserId,
-                        Name = u.Name,
-                        Password = u.Password,
-                        Email = u.Email,
-                        PhoneNumber = u.PhoneNumber,
-                        ProfilePicture = u.ProfilePicture
-                    })
+                    .Select(u => new SimpleUser(u))
                     .FirstOrDefaultAsync();
 
                 if (user == null)
