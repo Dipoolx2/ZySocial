@@ -30,7 +30,7 @@ func sendCouldntFindUserAlert() {
 }
 
 func loginUserRequest(username: String, password: String) async -> Int64 {
-    guard let url = URL(string: "https://10.10.137.13:7189/user/LoginSimpleUser?username="+String(username)+"&password="+password) else {
+    guard let url = URL(string: baseApiURL + "user/LoginSimpleUser?username="+String(username)+"&password="+password) else {
         return -1
     }
     let findUserRequest = URLRequest(url: url)

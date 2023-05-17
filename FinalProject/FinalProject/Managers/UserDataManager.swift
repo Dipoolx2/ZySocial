@@ -12,7 +12,7 @@ func getSharedSession() -> URLSession {
 }
 
 func findUserRequest(userid: Int64) async -> User? {
-    guard let url = URL(string: "https://10.10.137.13:7189/user/GetSimpleUser/"+String(userid)) else {
+    guard let url = URL(string: baseApiURL + "user/GetSimpleUser/"+String(userid)) else {
         return nil
     }
     let findUserRequest = URLRequest(url: url)
@@ -34,7 +34,7 @@ func findUserRequest(userid: Int64) async -> User? {
 }
 
 func updateUserEmail(userId: Int64, email: String) async -> Bool {
-    guard let url = URL(string: "https://10.10.137.13:7189/user/UpdateUserEmail/" + String(userId) + "/" + email) else {
+    guard let url = URL(string: baseApiURL + "user/UpdateUserEmail/" + String(userId) + "/" + email) else {
         return false
     }
     var findFriendRequestsRequest = URLRequest(url: url)
@@ -53,7 +53,7 @@ func updateUserEmail(userId: Int64, email: String) async -> Bool {
 }
 
 func updateUserPhoneNumber(userId: Int64, phoneNumber: String) async -> Bool {
-    guard let url = URL(string: "https://10.10.137.13:7189/user/UpdateUserPhoneNumber/" + String(userId) + "/" + phoneNumber) else {
+    guard let url = URL(string: baseApiURL + "user/UpdateUserPhoneNumber/" + String(userId) + "/" + phoneNumber) else {
         return false
     }
     var findFriendRequestsRequest = URLRequest(url: url)
@@ -74,7 +74,7 @@ func updateUserPhoneNumber(userId: Int64, phoneNumber: String) async -> Bool {
 func updateUserPicture(userId: Int64, profilePicture: String) async -> Bool {
     let pictureTag:String = String(profilePicture.dropFirst(20))
     print("picture tag: " + pictureTag)
-    guard let url = URL(string: "https://10.10.137.13:7189/user/UpdateUserPicture/" + String(userId) + "/" + pictureTag) else {
+    guard let url = URL(string: baseApiURL + "user/UpdateUserPicture/" + String(userId) + "/" + pictureTag) else {
         return false
     }
     var request = URLRequest(url: url)

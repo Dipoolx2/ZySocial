@@ -8,8 +8,7 @@
 import Foundation
 
 func deleteCommentRequest(commentId: Int64) async -> Bool {
-    print("https://10.10.137.13:7189/Comment/DeleteComment/"+String(commentId))
-    guard let url = URL(string: "https://10.10.137.13:7189/Comment/DeleteComment/"+String(commentId)) else {
+    guard let url = URL(string: baseApiURL + "Comment/DeleteComment/"+String(commentId)) else {
         return false
     }
     var findUserRequest = URLRequest(url: url)
@@ -33,7 +32,7 @@ func deleteCommentRequest(commentId: Int64) async -> Bool {
 }
 
 func addCommentRequest(postId: Int64, userId: Int64, body: String) async -> Bool {
-    guard let url = URL(string: "https://10.10.137.13:7189/Comment/PostComment/"+String(postId) + "/" + String(userId) + "/" + body) else {
+    guard let url = URL(string: baseApiURL + "Comment/PostComment/"+String(postId) + "/" + String(userId) + "/" + body) else {
         return false
     }
     var findUserRequest = URLRequest(url: url)

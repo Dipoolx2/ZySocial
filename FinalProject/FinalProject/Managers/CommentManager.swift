@@ -12,7 +12,7 @@ import Foundation
 // TODO: notifications, friends, change profile, api connection
 
 func getCommentsInPost(postId: Int64) async -> [Comment]? {
-    guard let url = URL(string: "https://10.10.137.13:7189/comment/GetPostComments/" + String(postId)) else {
+    guard let url = URL(string: baseApiURL + "comment/GetPostComments/" + String(postId)) else {
         return nil
     }
     var findPostsRequest = URLRequest(url: url)
@@ -43,7 +43,7 @@ func getCommentsInPost(postId: Int64) async -> [Comment]? {
 
 
 func getComments() async -> [Comment]? {
-    guard let url = URL(string: "https://10.10.137.13:7189/comment/GetSimpleComments/") else {
+    guard let url = URL(string: baseApiURL + "comment/GetSimpleComments/") else {
         return nil
     }
     var findPostsRequest = URLRequest(url: url)

@@ -7,7 +7,8 @@
 
 import Foundation
 
-var loggedInUserId: Int64 = 2
+public let baseApiURL: String = "https://10.10.137.13:7189/"
+var loggedInUserId: Int64 = -1
 
 func isLoggedIn() -> Bool {
     return loggedInUserId != -1

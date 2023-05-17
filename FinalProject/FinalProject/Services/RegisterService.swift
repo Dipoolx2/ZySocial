@@ -8,7 +8,7 @@
 import Foundation
 
 func registerUser(userName: String, password: String, email: String) async -> Bool {
-    guard let url = URL(string: "https://10.10.137.13:7189/user/RegisterNewUser/"+userName+"/"+password+"/"+email) else {
+    guard let url = URL(string: baseApiURL + "user/RegisterNewUser/"+userName+"/"+password+"/"+email) else {
         return false
     }
     var findUserRequest = URLRequest(url: url)

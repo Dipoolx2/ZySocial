@@ -35,8 +35,7 @@ func handleFriendRequest(requestId: Int64, accepted: Bool) async -> User? {
 }
 
 func sendFriendRequestToName(userId: Int64, receiverName: String) async -> User? {
-    print("https://10.10.137.13:7189/friendship/SendFriendRequestToName/" + String(userId) + "/" + String(receiverName))
-    guard let url = URL(string: "https://10.10.137.13:7189/friendship/SendFriendRequestToName/" + String(userId) + "/" + String(receiverName)) else {
+    guard let url = URL(string: baseApiURL + "friendship/SendFriendRequestToName/" + String(userId) + "/" + String(receiverName)) else {
         return nil
     }
     var findFriendRequestsRequest = URLRequest(url: url)
@@ -62,7 +61,7 @@ func sendFriendRequestToName(userId: Int64, receiverName: String) async -> User?
 }
 
 func removeFriend(userId: Int64, friendId: Int64) async {
-    guard let url = URL(string: "https://10.10.137.13:7189/friendship/DeletePotentialFriendRequests/" + String(userId) + "?friendId=" + String(friendId)) else {
+    guard let url = URL(string: baseApiURL + "friendship/DeletePotentialFriendRequests/" + String(userId) + "?friendId=" + String(friendId)) else {
         return
     }
     var findFriendRequestsRequest = URLRequest(url: url)
@@ -87,7 +86,7 @@ func removeFriend(userId: Int64, friendId: Int64) async {
 }
 
 func fetchFriendRequests() async -> [FriendRequest]? {
-    guard let url = URL(string: "https://10.10.137.13:7189/friendship/GetSimpleFriendRequests/" ) else {
+    guard let url = URL(string: baseApiURL + "friendship/GetSimpleFriendRequests/" ) else {
         return nil
     }
     let findFriendRequestsRequest = URLRequest(url: url)
@@ -113,7 +112,7 @@ func fetchFriendRequests() async -> [FriendRequest]? {
 }
 
 func fetchIncomingRequests(userId: Int64) async -> [FriendRequest]? {
-    guard let url = URL(string: "https://10.10.137.13:7189/friendship/GetIncomingSimpleFriendRequests/"+String(userId) ) else {
+    guard let url = URL(string: baseApiURL + "friendship/GetIncomingSimpleFriendRequests/"+String(userId) ) else {
         return nil
     }
     let findFriendRequestsRequest = URLRequest(url: url)
@@ -139,7 +138,7 @@ func fetchIncomingRequests(userId: Int64) async -> [FriendRequest]? {
 }
 
 func fetchFriendships(userId: Int64) async -> [FriendRequest]? {
-    guard let url = URL(string: "https://10.10.137.13:7189/friendship/GetSimpleFriendships/"+String(userId) ) else {
+    guard let url = URL(string: baseApiURL + "friendship/GetSimpleFriendships/"+String(userId) ) else {
         return nil
     }
     let findFriendRequestsRequest = URLRequest(url: url)
@@ -165,7 +164,7 @@ func fetchFriendships(userId: Int64) async -> [FriendRequest]? {
 }
 
 func fetchFriends(userId: Int64) async -> [User]? {
-    guard let url = URL(string: "https://10.10.137.13:7189/friendship/GetFriends/"+String(userId) ) else {
+    guard let url = URL(string: baseApiURL + "friendship/GetFriends/"+String(userId) ) else {
         return nil
     }
     let findFriendRequestsRequest = URLRequest(url: url)

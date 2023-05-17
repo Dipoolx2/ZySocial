@@ -14,7 +14,7 @@ func makePost(userId: Int64, caption: String, image: String?, likes: Bool, comme
     let likesString = String(likes)
     let commentsString = String(comments)
 
-    guard let urlString = "https://10.10.137.13:7189/post/NewPost/\(userId)/\(caption)/\(pictureTag ?? "null")/\(likesString)/\(commentsString)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+    guard let urlString = "\(baseApiURL)post/NewPost/\(userId)/\(caption)/\(pictureTag ?? "null")/\(likesString)/\(commentsString)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
           let url = URL(string: urlString) else {
         return false
     }

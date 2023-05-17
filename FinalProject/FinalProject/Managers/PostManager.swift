@@ -10,7 +10,7 @@ import SwiftUI
 
 func getPostsRequest() async -> [Post]? {
     print("getting posts")
-    guard let url = URL(string: "https://10.10.137.13:7189/post/GetSimplePosts/") else {
+    guard let url = URL(string: baseApiURL + "post/GetSimplePosts/") else {
         
         return nil
     }
@@ -39,7 +39,7 @@ func getPostsRequest() async -> [Post]? {
 }
 
 func getUserPosts(userId: Int64) async -> [Post]? {
-    guard let url = URL(string: "https://10.10.137.13:7189/post/GetUserPosts/" + String(userId)) else {
+    guard let url = URL(string: baseApiURL + "post/GetUserPosts/" + String(userId)) else {
         return nil
     }
     var findPostsRequest = URLRequest(url: url)
