@@ -7,7 +7,7 @@
 
 import Foundation
 
-var loggedInUserId: Int64 = 2
+var loggedInUserId: Int64 = -1
 
 func isLoggedIn() -> Bool {
     return loggedInUserId != -1

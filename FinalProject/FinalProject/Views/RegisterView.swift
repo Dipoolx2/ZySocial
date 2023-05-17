@@ -13,6 +13,8 @@ struct RegisterView: View {
     @State private var password = ""
     @State private var email = ""
     @State private var isShowingLoginView = false
+    @State private var errorMessage = ""
+    @State private var successfulMessage = ""
     
     var body: some View {
         NavigationView {
@@ -35,7 +37,16 @@ struct RegisterView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 
                 Button(action: {
-                    // handle registration logic
+                    async {
+                        let result = await registerUser(userName:username, password: password, email: email)
+                        if result == false {
+                            successfulMessage = ""
+                            errorMessage = "Registration failed. Try different credentials."
+                        } else {
+                            errorMessage = ""
+                            successfulMessage = "Registration succeeded."
+                        }
+                    }
                 }, label: {
                     Text("Register")
                         .font(.headline)
@@ -46,7 +57,10 @@ struct RegisterView: View {
                         .cornerRadius(10)
                 })
                 .padding()
-                
+                Text(errorMessage).foregroundColor(.red)
+                Text(successfulMessage)
+                    .foregroundColor(.green)
+                    .frame(maxWidth: .infinity, alignment: .center)
                 Spacer()
             }
             .navigationBarTitle("", displayMode: .inline)
