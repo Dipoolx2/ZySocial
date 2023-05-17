@@ -67,9 +67,7 @@ struct FeedView: View {
                 VStack {
                     HStack {
                         Spacer()
-                        Button(action: {
-                            // Perform the edit action here
-                        }) {
+                        NavigationLink(destination: ProfileEditView(userId: loggedUserId)) {
                             Text("Edit")
                                 .foregroundColor(.blue)
                         }
@@ -84,6 +82,7 @@ struct FeedView: View {
             .tabItem {
                 Label("My Profile", systemImage: "person.crop.circle")
             }
+            .tag(2)
             .tag(2)
             NavigationView {
                 FriendshipView(userId: loggedUserId)
